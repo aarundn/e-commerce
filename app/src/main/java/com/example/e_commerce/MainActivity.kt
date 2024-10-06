@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity() {
                 // Run your animation.
                 slideUp.start()
             }
+        }else{
+            setTheme(R.style.Theme_Ecommerce)
         }
     }
 }
