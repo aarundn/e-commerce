@@ -3,14 +3,17 @@ package com.example.e_commerce
 import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
+import android.view.TextureView
 import android.view.View
 import android.view.animation.AnticipateInterpolator
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlin.jvm.Throws
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +21,9 @@ class MainActivity : AppCompatActivity() {
         initSplashScreen()
         setContentView(R.layout.activity_main)
 
+        findViewById<TextView>(R.id.text).setOnClickListener{
+            throw RuntimeException("test crashed")
+        }
     }
 
     private fun initSplashScreen() {
