@@ -13,6 +13,10 @@ import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.chargily_pay.ChargilyCheckout
+import com.example.e_commerce.utils.CrashlyticsUtils
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlin.jvm.Throws
 
 class MainActivity : AppCompatActivity() {
@@ -20,10 +24,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initSplashScreen()
         setContentView(R.layout.activity_main)
-
-        findViewById<TextView>(R.id.text).setOnClickListener{
-            throw RuntimeException("test crashed")
-        }
     }
 
     private fun initSplashScreen() {
