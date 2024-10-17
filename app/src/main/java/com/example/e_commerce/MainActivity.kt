@@ -1,29 +1,54 @@
 package com.example.e_commerce
 
 import android.animation.ObjectAnimator
+import android.app.ActivityOptions
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.TextureView
 import android.view.View
 import android.view.animation.AnticipateInterpolator
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-
-import com.example.e_commerce.utils.CrashlyticsUtils
-import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlin.jvm.Throws
+import androidx.lifecycle.lifecycleScope
+import com.example.e_commerce.data.repository.user.UserRepositoryDataSourceImpl
+import com.example.e_commerce.ui.common.viewmodel.UserViewModel
+import com.example.e_commerce.ui.common.viewmodel.UserViewModelFactory
+import com.example.e_commerce.ui.login.AuthActivity
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private val userViewModel : UserViewModel by viewModels {
+        UserViewModelFactory(userRepository = UserRepositoryDataSourceImpl(this@MainActivity))
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSplashScreen()
-        setContentView(R.layout.activity_main)
+        lifecycleScope.launch(Main) {
+            val isLoggedIn  = userViewModel.isLogged().first()
+            if (isLoggedIn){
+                userViewModel.setUserStateLoggedIn(false)
+                setContentView(R.layout.activity_main)
+            } else {
+                goToAuthActivity()
+            }
+        }
+
+    }
+
+    private fun goToAuthActivity() {
+        val intent = Intent(this, AuthActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK  or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        val options = ActivityOptions.makeCustomAnimation(
+            this, android.R.anim.fade_in, android.R.anim.fade_out
+        )
+        startActivity(intent, options.toBundle())
+        finish()
+
     }
 
     private fun initSplashScreen() {
