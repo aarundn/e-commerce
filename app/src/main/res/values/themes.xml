@@ -26,4 +26,10 @@
         <item name="colorPrimaryDark">@color/primaryColor</item>
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
+
+    <style name="textTileStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/primaryDark</item>
+        <item name="fontFamily">@font/poppins_bold</item>
+    </style>
 </resources>
