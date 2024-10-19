@@ -10,4 +10,6 @@
     <string name="register">Register</string>
     <string name="with_facebook">With Facebook</string>
     <string name="with_google">With Google</string>
+    <string name="your_email">Your Email</string>
+    <string name="your_password">Your Password</string>
 </resources>

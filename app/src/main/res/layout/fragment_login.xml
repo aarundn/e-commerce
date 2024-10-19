@@ -2,7 +2,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-<!--        <variable name="user" type="com.example.User"/>-->
+        <variable name="viewmodel"
+            type="com.example.e_commerce.ui.login.viewmodel.LoginViewModel"/>
     </data>
     <androidx.core.widget.NestedScrollView
         android:background="@color/white"
@@ -47,9 +48,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/SmallTileStyle"
+                    android:text="@={viewmodel.email}"
                     android:textStyle="bold"
                     android:inputType="textEmailAddress"
-                    android:hint="Your Email" />
+                    android:hint="@string/your_email" />
 
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -67,10 +69,11 @@
                     android:id="@+id/passwordEdt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="@={viewmodel.password}"
                     style="@style/SmallTileStyle"
                     android:textStyle="bold"
                     android:inputType="textPassword"
-                    android:hint="Your Password" />
+                    android:hint="@string/your_password" />
 
             </com.google.android.material.textfield.TextInputLayout>
             <androidx.appcompat.widget.AppCompatButton

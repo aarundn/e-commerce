@@ -1,4 +1,4 @@
-package com.example.e_commerce
+package com.example.e_commerce.ui.home
 
 import android.animation.ObjectAnimator
 import android.app.ActivityOptions
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.example.e_commerce.R
 import com.example.e_commerce.data.repository.user.UserRepositoryDataSourceImpl
 import com.example.e_commerce.ui.common.viewmodel.UserViewModel
 import com.example.e_commerce.ui.common.viewmodel.UserViewModelFactory
