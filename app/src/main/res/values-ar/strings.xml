@@ -9,4 +9,5 @@
     <string name="with_facebook">With Facebook</string>
     <string name="with_google">With Google</string>
     <string name="your_email">Your Email</string>
+    <string name="loading">Loading\n</string>
 </resources>
