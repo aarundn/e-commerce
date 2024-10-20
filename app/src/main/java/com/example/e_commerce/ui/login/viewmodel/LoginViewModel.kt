@@ -12,6 +12,8 @@ import com.example.e_commerce.utils.isEmailValid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.forEach
@@ -23,36 +25,58 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val userRepository: UserPreferenceRepository,
     private val firebaseRepo: FireBaseAuthRepository
-): ViewModel() {
+) : ViewModel() {
 
-    val loginState  =  MutableSharedFlow<Resource<String>>()
+
+    private val _loginState = MutableSharedFlow<Resource<String>>()
+    val loginState: SharedFlow<Resource<String>> = _loginState.asSharedFlow()
     val email = MutableStateFlow("")
     val password = MutableStateFlow("")
 
-    private val isLoginValid: Flow<Boolean> = combine(email, password){ email, password ->
+    private val isLoginValid: Flow<Boolean> = combine(email, password) { email, password ->
         email.isEmailValid() && password.length >= 6
 
 
     }
-    fun login(){
-       val email = email.value
+
+    fun login() {
+        val email = email.value
         val password = password.value
         viewModelScope.launch {
-            if (isLoginValid.first()){
+            if (isLoginValid.first()) {
                 firebaseRepo.loginWithEmailAndPassword(email, password).onEach {
-                    when(it){
-                        is Resource.Loading -> loginState.emit(Resource.Loading())
-                        is Resource.Error -> loginState.emit(Resource.Error(it.exception ?: Exception("unknown Error ")))
+                    when (it) {
+                        is Resource.Loading -> _loginState.emit(Resource.Loading())
+                        is Resource.Error -> _loginState.emit(
+                            Resource.Error(
+                                it.exception ?: Exception("unknown Error ")
+                            )
+                        )
+
                         is Resource.Success -> {
                             userRepository.saveUserState(true)
-                            loginState.emit(Resource.Success("Success Login"))
+                            _loginState.emit(Resource.Success("Success Login"))
                         }
                     }
                 }.launchIn(viewModelScope)
             } else {
-                loginState.emit(Resource.Error(Exception("Invalid Email or Password")))
+                _loginState.emit(Resource.Error(Exception("Invalid Email or Password")))
             }
         }
+
+    }
+
+    fun loginWithGoogle(idToken: String) = viewModelScope.launch {
+        firebaseRepo.loginWithGoogle(idToken).onEach { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    _loginState.emit(Resource.Success(resource.data ?: "Empty user id"))
+                }
+                else -> {
+                    _loginState.emit(resource)
+                }
+            }
+        }.launchIn(viewModelScope)
 
     }
 }

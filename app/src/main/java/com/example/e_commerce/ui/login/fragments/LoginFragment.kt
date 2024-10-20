@@ -38,7 +38,7 @@ class LoginFragment : Fragment() {
     private val progressDialog by lazy {
         ProgressDialog.createProgressDialog(requireActivity())
     }
-    private val loginViewModel : LoginViewModel by lazy {
+    private val loginViewModel: LoginViewModel by lazy {
         LoginViewModel(
             userRepository = UserRepositoryDataSourceImpl(requireActivity()),
             firebaseRepo = FireBaseAuthRepositoryImpl()
@@ -65,14 +65,13 @@ class LoginFragment : Fragment() {
 
 
     private fun initListeners() {
-        binding.signInBtn.setOnClickListener{
+        binding.signInBtn.setOnClickListener {
             loginViewModel.login()
         }
-        binding.googleSigninBtn.setOnClickListener{
+        binding.googleSigninBtn.setOnClickListener {
             loginWithGoogle()
         }
     }
-
 
 
     private fun initViewModel() {
@@ -87,17 +86,23 @@ class LoginFragment : Fragment() {
 
                         is Resource.Success -> {
                             progressDialog.dismiss()
-                            Toast.makeText(requireActivity(),
-                                it.data, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireActivity(),
+                                it.data, Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         is Resource.Error -> {
                             val msg = it.exception?.message ?: getString(R.string.try_again_later)
                             progressDialog.dismiss()
-                            Toast.makeText(requireActivity(),
-                                it.exception?.message, Toast.LENGTH_SHORT).show()
-                            view?.showSnakeBarError(it.exception?.message ?: getString(R.string.try_again_later))
-                            logAuthIssueToCrashlytics(msg, "Email&Pass")
+                            Toast.makeText(
+                                requireActivity(),
+                                it.exception?.message, Toast.LENGTH_SHORT
+                            ).show()
+                            view?.showSnakeBarError(
+                                it.exception?.message ?: getString(R.string.try_again_later)
+                            )
+                            logAuthIssueToCrashlytics(msg, "Error")
                         }
                     }
                 }
@@ -105,8 +110,9 @@ class LoginFragment : Fragment() {
             }
         }
     }
+
     private lateinit var googleSignInClient: GoogleSignInClient
-    private fun loginWithGoogle(){
+    private fun loginWithGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.client_id)
             .requestEmail()
@@ -117,8 +123,9 @@ class LoginFragment : Fragment() {
         googleSignInClient.signOut()
         googleSignInLauncher.launch(googleSignInClient.signInIntent)
     }
+
     private val googleSignInLauncher = registerForActivityResult(
-    ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult()
     ) { result ->
 
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
@@ -144,20 +151,9 @@ class LoginFragment : Fragment() {
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        FirebaseAuth.getInstance().signInWithCredential(credential)
-            .addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    val user = FirebaseAuth.getInstance().currentUser
-
-
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                }
-            }
+        loginViewModel.loginWithGoogle(idToken)
     }
+
     private fun logAuthIssueToCrashlytics(msg: String, provider: String) {
         CrashlyticsUtils.sendCustomLogToCrashlytics<LoginException>(
             msg,
@@ -165,11 +161,13 @@ class LoginFragment : Fragment() {
             CrashlyticsUtils.LOGIN_PROVIDER to provider,
         )
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
+
     companion object {
-      private const val TAG = "LoginFragment"
+        private const val TAG = "LoginFragment"
     }
 }
