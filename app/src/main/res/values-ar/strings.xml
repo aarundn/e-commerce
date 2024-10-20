@@ -10,4 +10,8 @@
     <string name="with_google">With Google</string>
     <string name="your_email">Your Email</string>
     <string name="loading">Loading\n</string>
+    <string name="ok">Ok</string>
+    <string name="retry">retry</string>
+    <string name="google_sign_in_was_canceled_or_failed">Google sign in was canceled or failed</string>
+    <string name="try_again_later">Error pleas try again later.</string>
 </resources>

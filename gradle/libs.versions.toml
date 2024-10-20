@@ -9,7 +9,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.9.2"
+activity = "1.9.3"
 constraintlayout = "2.1.4"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.0.0"
@@ -22,7 +22,8 @@ firebaseStorage = "21.0.1"
 firebaseDatabase = "21.0.0"
 firebasePerf = "21.0.1"
 googleFirebaseFirebasePerf = "1.4.2"
-navigationFragment = "2.8.2"
+navigationFragment = "2.8.3"
+playServicesAuth = "21.2.0"
 reactivenetworkRx2 = "3.0.8"
 datastoreCoreAndroid = "1.1.1"
 [libraries]
@@ -47,6 +48,7 @@ firebase-config = { group = "com.google.firebase", name = "firebase-config", ver
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf", version.ref = "firebasePerf" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 reactivenetwork-rx2 = { module = "com.github.pwittchen:reactivenetwork-rx2", version.ref = "reactivenetworkRx2" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 
