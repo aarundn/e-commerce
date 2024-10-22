@@ -5,10 +5,12 @@
     <string name="or">Or</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="welcome_to_lafyuu" >Welcome to E-commerce</string>
     <string name="register">Register</string>
     <string name="with_facebook">With Facebook</string>
     <string name="with_google">With Google</string>
     <string name="your_email">Your Email</string>
+    <string name="your_password">Your Password</string>
     <string name="loading">Loading\n</string>
     <string name="ok">Ok</string>
     <string name="retry">retry</string>

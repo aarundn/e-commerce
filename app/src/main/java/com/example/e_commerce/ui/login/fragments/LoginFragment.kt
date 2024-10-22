@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -23,6 +24,13 @@ import com.example.e_commerce.ui.login.viewmodel.LoginViewModel
 import com.example.e_commerce.ui.showSnakeBarError
 import com.example.e_commerce.utils.CrashlyticsUtils
 import com.example.e_commerce.utils.LoginException
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsLogger
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -44,6 +52,9 @@ class LoginFragment : Fragment() {
             firebaseRepo = FireBaseAuthRepositoryImpl()
         )
     }
+    private lateinit var callbackManager: CallbackManager
+    private lateinit var loginLauncher: ActivityResultLauncher<Intent>
+
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -59,18 +70,59 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        FacebookSdk.setClientToken(getString(R.string.facebook_client_token))
+        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
+        FacebookSdk.sdkInitialize(requireActivity())
         initListeners()
         initViewModel()
+
+        callbackManager = CallbackManager.Factory.create()
+
+
+        loginLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            // Forward the result to Facebook SDK for processing
+            callbackManager.onActivityResult(result.resultCode, result.resultCode, result.data)
+        }
     }
 
 
     private fun initListeners() {
+
         binding.signInBtn.setOnClickListener {
             loginViewModel.login()
         }
         binding.googleSigninBtn.setOnClickListener {
             loginWithGoogle()
         }
+        val loginManager = LoginManager.getInstance()
+
+        binding.facebookSigninBtn.setOnClickListener {
+            loginManager.logInWithReadPermissions(this, listOf("email", "public_profile"))
+
+            loginWithFb(loginManager)
+        }
+    }
+
+    private fun loginWithFb(loginManager: LoginManager) {
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                val accessToken = loginResult.accessToken
+                Log.d("MainFragment", "Facebook token: ${accessToken.token}")
+                Toast.makeText(requireContext(), "Login Success", Toast.LENGTH_SHORT).show()
+
+            }
+
+            override fun onCancel() {
+                Log.d("MainFragment", "Facebook login canceled")
+            }
+
+            override fun onError(exception: FacebookException) {
+                Log.e("MainFragment", "Facebook login error: ${exception.message}")
+            }
+        })
     }
 
 
