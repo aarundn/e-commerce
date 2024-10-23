@@ -27,8 +27,7 @@ import com.example.e_commerce.utils.LoginException
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.FacebookSdk
-import com.facebook.appevents.AppEventsLogger
+
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -37,8 +36,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 
 
@@ -82,7 +79,6 @@ class LoginFragment : Fragment() {
         loginLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            // Forward the result to Facebook SDK for processing
             callbackManager.onActivityResult(result.resultCode, result.resultCode, result.data)
         }
     }
@@ -113,17 +109,21 @@ class LoginFragment : Fragment() {
         loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
                 val accessToken = loginResult.accessToken
-                Log.d("MainFragment", "Facebook token: ${accessToken.token}")
-                Toast.makeText(requireContext(), "Login Success", Toast.LENGTH_SHORT).show()
+
+                loginViewModel.loginWithFacebook(accessToken.token)
 
             }
 
             override fun onCancel() {
-                Log.d("MainFragment", "Facebook login canceled")
+                Log.d(TAG, "Facebook login canceled")
             }
 
             override fun onError(exception: FacebookException) {
-                Log.e("MainFragment", "Facebook login error: ${exception.message}")
+                view?.showSnakeBarError(exception.message ?: getString(R.string.try_again_later))
+                logAuthIssueToCrashlytics(
+                    exception.message ?: getString(R.string.try_again_later),
+                    "Facebook"
+                )
             }
         })
     }
