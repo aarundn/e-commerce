@@ -23,6 +23,11 @@ android {
 
     defaultConfig {
         buildConfigField "String" , "client_id" , "\"297932022423-flcpqjl19jmfgspdtuppmitr7fudpoeo.apps.googleusercontent.com\""
+        resValue "string" ,"faceboock_id", "\"338627082642019\""
+        resValue "string" ,"fb_login_protocol_scheme", "\"fb0438edcca27a52a7c0cfc905b8be7d35\""
+        resValue "string" ,"facebook_client_token", "\"ccce3097b9cf6bf2a436bfb02d68a23b\""
+
+
     }
     buildTypes {
         release {

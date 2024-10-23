@@ -52,11 +52,13 @@ class LoginFragment : Fragment() {
             firebaseRepo = FireBaseAuthRepositoryImpl()
         )
     }
-    private lateinit var callbackManager: CallbackManager
+    private val callbackManager: CallbackManager by lazy { CallbackManager.Factory.create() }
+    private val loginManager: LoginManager by lazy { LoginManager.getInstance() }
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
-
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,13 +73,10 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        FacebookSdk.setClientToken(getString(R.string.facebook_client_token))
-        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
-        FacebookSdk.sdkInitialize(requireActivity())
+
         initListeners()
         initViewModel()
 
-        callbackManager = CallbackManager.Factory.create()
 
 
         loginLauncher = registerForActivityResult(
@@ -97,10 +96,14 @@ class LoginFragment : Fragment() {
         binding.googleSigninBtn.setOnClickListener {
             loginWithGoogle()
         }
-        val loginManager = LoginManager.getInstance()
+
 
         binding.facebookSigninBtn.setOnClickListener {
-            loginManager.logInWithReadPermissions(this, listOf("email", "public_profile"))
+            loginManager.logInWithReadPermissions(
+                this,
+                callbackManager,
+                listOf("email", "public_profile")
+            )
 
             loginWithFb(loginManager)
         }
