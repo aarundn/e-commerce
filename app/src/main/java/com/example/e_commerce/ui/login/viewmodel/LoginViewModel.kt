@@ -1,12 +1,19 @@
 package com.example.e_commerce.ui.login.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.e_commerce.data.datasource.datastore.AppPreferencesDataSource
 import com.example.e_commerce.data.models.Resource
+import com.example.e_commerce.data.models.user.UserDetailsModel
 import com.example.e_commerce.data.repository.auth.FireBaseAuthRepository
+import com.example.e_commerce.data.repository.auth.FireBaseAuthRepositoryImpl
+import com.example.e_commerce.data.repository.common.AppDataStoreRepositoryImpl
+import com.example.e_commerce.data.repository.common.AppPreferenceRepository
 import com.example.e_commerce.data.repository.user.UserPreferenceRepository
-import com.example.e_commerce.data.repository.user.UserRepositoryDataSourceImpl
+import com.example.e_commerce.data.repository.user.UserPreferenceRepositoryImpl
+import com.example.e_commerce.domain.models.toUserDetailsPreferences
 import com.example.e_commerce.ui.common.viewmodel.UserViewModel
 import com.example.e_commerce.utils.isEmailValid
 import kotlinx.coroutines.flow.Flow
@@ -23,88 +30,81 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val userRepository: UserPreferenceRepository,
-    private val firebaseRepo: FireBaseAuthRepository
+    private val appPreferenceRepository: AppPreferenceRepository,
+    private val userPreferenceRepository: UserPreferenceRepository,
+    private val authRepository: FireBaseAuthRepository
 ) : ViewModel() {
 
+    private val _loginState = MutableSharedFlow<Resource<UserDetailsModel>>()
+    val loginState: SharedFlow<Resource<UserDetailsModel>> = _loginState.asSharedFlow()
 
-    private val _loginState = MutableSharedFlow<Resource<String>>()
-    val loginState: SharedFlow<Resource<String>> = _loginState.asSharedFlow()
     val email = MutableStateFlow("")
     val password = MutableStateFlow("")
 
-    private val isLoginValid: Flow<Boolean> = combine(email, password) { email, password ->
+    private val isLoginIsValid: Flow<Boolean> = combine(email, password) { email, password ->
         email.isEmailValid() && password.length >= 6
-
-
     }
 
-    fun login() {
+    fun login() = viewModelScope.launch {
         val email = email.value
         val password = password.value
-        viewModelScope.launch {
-            if (isLoginValid.first()) {
-                firebaseRepo.loginWithEmailAndPassword(email, password).onEach {
-                    when (it) {
-                        is Resource.Loading -> _loginState.emit(Resource.Loading())
-                        is Resource.Error -> _loginState.emit(
-                            Resource.Error(
-                                it.exception ?: Exception("unknown Error ")
-                            )
-                        )
+        if (isLoginIsValid.first()) {
+            handleLoginFlow { authRepository.loginWithEmailAndPassword(email, password) }
+        } else {
+            _loginState.emit(Resource.Error(Exception("Invalid email or password")))
+        }
+    }
 
-                        is Resource.Success -> {
-                            userRepository.saveUserState(true)
-                            _loginState.emit(Resource.Success("Success Login"))
-                        }
+    fun loginWithGoogle(idToken: String) {
+        handleLoginFlow { authRepository.loginWithGoogle(idToken) }
+    }
+
+    fun loginWithFacebook(token: String) {
+        handleLoginFlow { authRepository.loginWithFacebook(token) }
+    }
+
+    private fun handleLoginFlow(loginFlow: suspend () -> Flow<Resource<UserDetailsModel>>) =
+        viewModelScope.launch {
+            loginFlow().onEach { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        savePreferenceData(resource.data!!)
+                        _loginState.emit(Resource.Success(resource.data))
                     }
-                }.launchIn(viewModelScope)
-            } else {
-                _loginState.emit(Resource.Error(Exception("Invalid Email or Password")))
-            }
+
+                    else -> _loginState.emit(resource)
+                }
+            }.launchIn(viewModelScope)
         }
 
+
+    private suspend fun savePreferenceData(userDetailsModel: UserDetailsModel) {
+        appPreferenceRepository.saveLoginState(true)
+        userPreferenceRepository.updateUserDetails(userDetailsModel.toUserDetailsPreferences())
     }
 
-    fun loginWithGoogle(idToken: String) = viewModelScope.launch {
-        firebaseRepo.loginWithGoogle(idToken).onEach { resource ->
-            when (resource) {
-                is Resource.Success -> {
-                    _loginState.emit(Resource.Success(resource.data ?: "Empty user id"))
-                }
-                else -> {
-                    _loginState.emit(resource)
-                }
-            }
-        }.launchIn(viewModelScope)
-
-    }
-    fun loginWithFacebook(idToken: String) = viewModelScope.launch {
-        firebaseRepo.loginWithFacebook(idToken).onEach { resource ->
-            when (resource) {
-                is Resource.Success -> {
-                    _loginState.emit(Resource.Success(resource.data ?: "Empty user id"))
-                }
-                else -> {
-                    _loginState.emit(resource)
-                }
-            }
-        }.launchIn(viewModelScope)
-
+    companion object {
+        private const val TAG = "LoginViewModel"
     }
 }
 
+// create viewmodel factory class
 class LoginViewModelFactory(
-    private val userRepository: UserPreferenceRepository,
-    private val firebaseRepo: FireBaseAuthRepository
+    private val contextValue: Context
 ) : ViewModelProvider.Factory {
 
+    private val appPreferenceRepository =
+        AppDataStoreRepositoryImpl(AppPreferencesDataSource(contextValue))
+    private val userPreferenceRepository = UserPreferenceRepositoryImpl(contextValue)
+    private val authRepository = FireBaseAuthRepositoryImpl()
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        // Ensure that the class being requested is the UserViewModel
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            // Return a new instance of UserViewModel with the userRepository passed in
-            @Suppress("UNCHECKED_CAST")
-            return LoginViewModel(userRepository, firebaseRepo) as T
+            @Suppress("UNCHECKED_CAST") return LoginViewModel(
+                appPreferenceRepository,
+                userPreferenceRepository,
+                authRepository,
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

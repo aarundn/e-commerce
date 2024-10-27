@@ -11,16 +11,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.e_commerce.BuildConfig
 import com.example.e_commerce.R
 
 import com.example.e_commerce.data.models.Resource
-import com.example.e_commerce.data.repository.auth.FireBaseAuthRepositoryImpl
-import com.example.e_commerce.data.repository.user.UserRepositoryDataSourceImpl
 import com.example.e_commerce.databinding.FragmentLoginBinding
 import com.example.e_commerce.ui.common.views.ProgressDialog
+import com.example.e_commerce.ui.home.MainActivity
 import com.example.e_commerce.ui.login.viewmodel.LoginViewModel
+import com.example.e_commerce.ui.login.viewmodel.LoginViewModelFactory
 import com.example.e_commerce.ui.showSnakeBarError
 import com.example.e_commerce.utils.CrashlyticsUtils
 import com.example.e_commerce.utils.LoginException
@@ -43,11 +44,8 @@ class LoginFragment : Fragment() {
     private val progressDialog by lazy {
         ProgressDialog.createProgressDialog(requireActivity())
     }
-    private val loginViewModel: LoginViewModel by lazy {
-        LoginViewModel(
-            userRepository = UserRepositoryDataSourceImpl(requireActivity()),
-            firebaseRepo = FireBaseAuthRepositoryImpl()
-        )
+    private val loginViewModel: LoginViewModel by viewModels {
+            LoginViewModelFactory(contextValue = requireActivity())
     }
     private val callbackManager: CallbackManager by lazy { CallbackManager.Factory.create() }
     private val loginManager: LoginManager by lazy { LoginManager.getInstance() }
@@ -141,10 +139,7 @@ class LoginFragment : Fragment() {
 
                         is Resource.Success -> {
                             progressDialog.dismiss()
-                            Toast.makeText(
-                                requireActivity(),
-                                it.data, Toast.LENGTH_SHORT
-                            ).show()
+                            goToHome()
                         }
 
                         is Resource.Error -> {
@@ -166,6 +161,12 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun goToHome() {
+        requireActivity().startActivity(Intent(activity, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
+        requireActivity().finish()
+    }
     private lateinit var googleSignInClient: GoogleSignInClient
     private fun loginWithGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
