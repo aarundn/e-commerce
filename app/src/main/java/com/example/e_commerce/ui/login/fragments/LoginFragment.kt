@@ -108,8 +108,8 @@ class LoginFragment : Fragment() {
     private fun loginWithFb(loginManager: LoginManager) {
         loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
-                val accessToken = loginResult.accessToken
 
+                val accessToken = loginResult.accessToken
                 loginViewModel.loginWithFacebook(accessToken.token)
 
             }

@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
     alias(libs.plugins.google.firebase.firebase.perf)
+    id('com.google.protobuf') version "0.9.4" apply true
+    id('kotlin-parcelize')
     id('kotlin-kapt')
 }
 
@@ -73,7 +75,7 @@ dependencies {
     implementation libs.reactivenetwork.rx2
     implementation libs.androidx.datastore.preferences
     implementation libs.play.services.auth
-
+    implementation libs.protobuf.kotlin.lite.v4260
     // navigation components
 
     implementation libs.androidx.navigation.fragment
@@ -82,4 +84,23 @@ dependencies {
 
     //facebook sdk
     implementation libs.facebook.android.sdk
+}
+
+// Define tasks for Java and Kotlin generation with 'lite' option
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.26.1"
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+                kotlin {
+                    option 'lite'
+                }
+            }
+        }
+    }
 }
