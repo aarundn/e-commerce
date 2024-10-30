@@ -39,9 +39,9 @@ class FireBaseAuthRepositoryImpl(
     private suspend fun login(
         provider: AuthProvider,
         signInRequest: suspend () -> AuthResult,
-    ): Flow<Resource<UserDetailsModel>> = channelFlow {
+    ): Flow<Resource<UserDetailsModel>> = flow {
         try {
-            send(Resource.Loading())
+            emit(Resource.Loading())
             // perform firebase auth sign in request
             val authResult = signInRequest()
             val userId = authResult.user?.uid
@@ -49,8 +49,8 @@ class FireBaseAuthRepositoryImpl(
             if (userId == null) {
                 val msg = "Sign in UserID not found"
                 logAuthIssueToCrashlytics(msg, provider.name)
-                send(Resource.Error(Exception(msg)))
-                return@channelFlow
+                emit(Resource.Error(Exception(msg)))
+                return@flow
             }
 
             // get user details from firestore
@@ -58,24 +58,24 @@ class FireBaseAuthRepositoryImpl(
             if (!userDoc.exists()) {
                 val msg = "Logged in user not found in firestore"
                 logAuthIssueToCrashlytics(msg, provider.name)
-                send(Resource.Error(Exception(msg)))
-                return@channelFlow
+                emit(Resource.Error(Exception(msg)))
+                return@flow
             }
 
             // map user details to UserDetailsModel
             val userDetails = userDoc.toObject(UserDetailsModel::class.java)
             userDetails?.let {
-                send(Resource.Success(userDetails))
+                emit(Resource.Success(userDetails))
             } ?: run {
                 val msg = "Error mapping user details to UserDetailsModel, user id = $userId"
                 logAuthIssueToCrashlytics(msg, provider.name)
-                send(Resource.Error(Exception(msg)))
+                emit(Resource.Error(Exception(msg)))
             }
         } catch (e: Exception) {
             logAuthIssueToCrashlytics(
                 e.message ?: "Unknown error from exception = ${e::class.java}", provider.name
             )
-            send(Resource.Error(e)) // Emit error
+            emit(Resource.Error(e)) // Emit error
         }
     }
 
