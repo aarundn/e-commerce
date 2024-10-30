@@ -4,7 +4,7 @@
 
 
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-    <string name="welcome_to_lafyuu" >Welcome to E-commerce</string>
+    <string name="welcome_to_lafyuu">Welcome to E-commerce</string>
     <string name="sign_in_to_continue">Sign in to continue</string>
     <string name="or">Or</string>
     <string name="forgot_password">Forgot password?</string>
@@ -19,4 +19,10 @@
     <string name="retry">retry</string>
     <string name="google_sign_in_was_canceled_or_failed">Google sign in was canceled or failed</string>
     <string name="try_again_later">Error pleas try again later.</string>
+    <string name="create_an_new_account">Create an new account</string>
+    <string name="get_started">Let’s Get Started</string>
+    <string name="sign_up">Sign up</string>
+    <string name="have_a_account">have a account?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="full_name">Full name</string>
 </resources>

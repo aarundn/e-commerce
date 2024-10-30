@@ -26,15 +26,36 @@
                 android:layout_margin="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/welcome_to_lafyuu"
+                android:text="@string/get_started"
                 style="@style/LargeTileStyle"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_in_to_continue"
+                android:text="@string/create_an_new_account"
                 style="@style/SmallTileStyle"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/user"
+                app:boxStrokeWidth="0.5dp"
+                app:startIconCheckable="true"
+                app:startIconTint="@color/neutral_grey"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fullNameEdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/SmallTileStyle"
+                    android:text="@={viewmodel.email}"
+                    android:textStyle="bold"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/full_name" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:startIconDrawable="@drawable/email"
@@ -76,81 +97,60 @@
                     android:hint="@string/your_password" />
 
             </com.google.android.material.textfield.TextInputLayout>
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/signInBtn"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
-                android:text="@string/sign_in"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/passowrd"
+                app:startIconCheckable="true"
+                app:passwordToggleEnabled="true"
+                app:boxStrokeWidth="0.5dp"
+                app:startIconTint="@color/neutral_grey"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confirmPasswordEdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={viewmodel.password}"
+                    style="@style/SmallTileStyle"
+                    android:textStyle="bold"
+                    android:inputType="textPassword"
+                    android:hint="@string/your_password" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/signUpBtn"
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:text="@string/sign_up"
                 android:background="@drawable/button_back"
                 style="@style/ButtonStyle"
                 />
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_centerInParent="true"
-                    android:background="@color/neutral_grey" />
-
-                <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@color/white"
-                    android:fontFamily="@font/poppins_bold"
-                    android:gravity="center"
-                    android:text="@string/or"
-                    android:textAllCaps="true"
-                    android:textColor="@color/neutral_grey" />
-            </RelativeLayout>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/google_signin_btn"
-            style="@style/SocialButtonStyle"
-            android:drawableStart="@drawable/google"
-            android:text="@string/with_google" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/facebook_signin_btn"
-            style="@style/SocialButtonStyle"
-            android:layout_marginTop="8dp"
-            android:drawableStart="@drawable/facebook"
-            android:text="@string/with_facebook" />
-
-        <TextView
-            android:id="@+id/forgot_password_tv"
-            style="@style/MediumPrimaryTextViewStyle"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:text="@string/forgot_password" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/SmallTileStyle"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-                android:text="@string/don_t_have_an_account" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/SmallTileStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-            <TextView
-                android:id="@+id/register_tv"
-                style="@style/MediumPrimaryTextViewStyle"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:layout_marginStart="4dp"
-                android:text="@string/register"
-                android:layout_width="0dp" />
-        </LinearLayout>
+                    android:text="@string/have_a_account" />
+
+                <TextView
+                    android:id="@+id/login_tv"
+                    style="@style/MediumPrimaryTextViewStyle"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/sign_in"
+                    android:layout_width="0dp" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>

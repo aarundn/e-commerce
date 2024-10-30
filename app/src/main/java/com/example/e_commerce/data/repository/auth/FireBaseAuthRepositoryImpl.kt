@@ -1,5 +1,6 @@
 package com.example.e_commerce.data.repository.auth;
 
+import android.util.Log
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -34,6 +35,22 @@ class FireBaseAuthRepositoryImpl(
     override suspend fun loginWithFacebook(token: String) = login(AuthProvider.FACEBOOK) {
         val credential = FacebookAuthProvider.getCredential(token)
         auth.signInWithCredential(credential).await()
+    }
+
+    override suspend fun registerWithEmailAndPassWord(
+        fullName: String,
+        email: String,
+        password: String
+    ): Flow<Resource<UserDetailsModel>> = flow {
+        try {
+            emit(Resource.Loading())
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            val userId = authResult.user?.uid
+
+        } catch (e: Exception){
+            Log.d(TAG, "registerWithEmailAndPassWord: ${e.message}")
+            emit(Resource.Error(e))
+        }
     }
 
     private suspend fun login(
