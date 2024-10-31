@@ -1,6 +1,5 @@
 package com.example.e_commerce.data.repository.auth;
 
-import android.util.Log
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -12,7 +11,6 @@ import com.example.e_commerce.data.models.user.UserDetailsModel
 import com.example.e_commerce.utils.CrashlyticsUtils
 import com.example.e_commerce.utils.LoginException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
@@ -26,9 +24,54 @@ class FireBaseAuthRepositoryImpl(
         email: String, password: String
     ) = login(AuthProvider.EMAIL) { auth.signInWithEmailAndPassword(email, password).await() }
 
-    override suspend fun loginWithGoogle(idToken: String) = login(AuthProvider.GOOGLE) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential).await()
+    override suspend fun loginWithGoogle(idToken: String): Flow<Resource<UserDetailsModel>> {
+        return flow {
+            try {
+                emit(Resource.Loading())
+                // perform firebase auth sign in request
+                val credential = GoogleAuthProvider.getCredential(idToken, null)
+                val result = auth.signInWithCredential(credential).await()
+                val userId = auth.currentUser?.uid
+
+                if (userId == null) {
+                    val msg = "Sign in UserID not found"
+                    logAuthIssueToCrashlytics(msg, AuthProvider.GOOGLE.name)
+                    emit(Resource.Error(Exception(msg)))
+                    return@flow
+                }
+
+
+                // get user details from firestore
+                val userDoc = firestore.collection("users").document(userId).get().await()
+                if (!userDoc.exists()) {
+                    // New user - Add user details to Firestore
+                    val user = result.user
+                    val userDetails = UserDetailsModel(
+                        id = userId,
+                        name = user?.displayName ?: "Unknown Name",
+                        email = user?.email ?: "Unknown Email",
+                        createdAt = System.currentTimeMillis()
+                    )
+                    firestore.collection("users").document(userId).set(userDetails).await()
+                }
+
+                // map user details to UserDetailsModel
+                val savedUserDoc = firestore.collection("users").document(userId).get().await()
+                val userDetails = savedUserDoc.toObject(UserDetailsModel::class.java)
+                userDetails?.let {
+                    emit(Resource.Success(userDetails))
+                } ?: run {
+                    val msg = "Error mapping user details to UserDetailsModel, user id = $userId"
+                    logAuthIssueToCrashlytics(msg, AuthProvider.GOOGLE.name)
+                    emit(Resource.Error(Exception(msg)))
+                }
+            } catch (e: Exception) {
+                logAuthIssueToCrashlytics(
+                    e.message ?: "Unknown error from exception = ${e::class.java}", AuthProvider.GOOGLE.name
+                )
+                emit(Resource.Error(e)) // Emit error
+            }
+        }
     }
 
     // Example usage for Facebook login
@@ -41,15 +84,38 @@ class FireBaseAuthRepositoryImpl(
         fullName: String,
         email: String,
         password: String
-    ): Flow<Resource<UserDetailsModel>> = flow {
-        try {
-            emit(Resource.Loading())
-            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-            val userId = authResult.user?.uid
+    ): Flow<Resource<UserDetailsModel>> {
+        return flow {
+            try {
+                emit(Resource.Loading())
+                // perform firebase auth sign up request
+                val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+                val userId = authResult.user?.uid
 
-        } catch (e: Exception){
-            Log.d(TAG, "registerWithEmailAndPassWord: ${e.message}")
-            emit(Resource.Error(e))
+                if (userId == null) {
+                    val msg = "Sign up UserID not found"
+                    logAuthIssueToCrashlytics(msg, AuthProvider.EMAIL.name)
+                    emit(Resource.Error(Exception(msg)))
+                    return@flow
+                }
+
+                // create user details in firestore
+                val userDetails = UserDetailsModel(
+                    id = userId,
+                    name = fullName,
+                    email = email,
+                    createdAt = System.currentTimeMillis()
+                )
+                firestore.collection("users").document(userId).set(userDetails).await()
+                authResult.user?.sendEmailVerification()?.await()
+                emit(Resource.Success(userDetails))
+            } catch (e: Exception) {
+                logAuthIssueToCrashlytics(
+                    e.message ?: "Unknown error from exception = ${e::class.java}",
+                    AuthProvider.EMAIL.name
+                )
+                emit(Resource.Error(e)) // Emit error
+            }
         }
     }
 
@@ -69,7 +135,12 @@ class FireBaseAuthRepositoryImpl(
                 emit(Resource.Error(Exception(msg)))
                 return@flow
             }
-
+            if (authResult.user?.isEmailVerified == false) {
+                val msg = "Email not verified"
+                logAuthIssueToCrashlytics(msg, provider.name)
+                emit(Resource.Error(Exception(msg)))
+                return@flow
+            }
             // get user details from firestore
             val userDoc = firestore.collection("users").document(userId).get().await()
             if (!userDoc.exists()) {

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.e_commerce.BuildConfig
 import com.example.e_commerce.R
 
@@ -68,11 +69,8 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         initListeners()
         initViewModel()
-
-
 
         loginLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -91,6 +89,9 @@ class LoginFragment : Fragment() {
             loginWithGoogle()
         }
 
+        binding.registerTv.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
 
         binding.facebookSigninBtn.setOnClickListener {
             loginManager.logInWithReadPermissions(
@@ -153,6 +154,7 @@ class LoginFragment : Fragment() {
                                 it.exception?.message ?: getString(R.string.try_again_later)
                             )
                             logAuthIssueToCrashlytics(msg, "Error")
+                            Log.d(TAG, "initViewModel: ${it.exception?.message}")
                         }
                     }
                 }

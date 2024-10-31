@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import com.google.firebase.firestore.PropertyName
 import com.google.firebase.firestore.ServerTimestamp
-import java.util.Date
 import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
@@ -12,7 +11,7 @@ data class UserDetailsModel(
     @ServerTimestamp
     @get:PropertyName("created_at")
     @set:PropertyName("created_at")
-    var createdAt: Date? = null,
+    var createdAt: Long? = null,
     var id: String? = null,
     var email: String? = null,
     var name: String? = null,
