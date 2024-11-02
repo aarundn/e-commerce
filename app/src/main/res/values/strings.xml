@@ -26,4 +26,6 @@
     <string name="sign_in">Sign in</string>
     <string name="full_name">Full name</string>
     <string name="confirm_pass">Confirm Password</string>
+    <string name="forget_password_msg">Enter your email, to send an email to update your password.</string>
+    <string name="send">Send</string>
 </resources>

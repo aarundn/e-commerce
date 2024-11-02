@@ -102,6 +102,12 @@ class LoginFragment : Fragment() {
 
             loginWithFb(loginManager)
         }
+        binding.forgotPasswordTv.setOnClickListener {
+            FogotePasswordFragment().show(
+                requireActivity().supportFragmentManager,
+                FogotePasswordFragment.TAG
+            )
+        }
     }
 
     private fun loginWithFb(loginManager: LoginManager) {

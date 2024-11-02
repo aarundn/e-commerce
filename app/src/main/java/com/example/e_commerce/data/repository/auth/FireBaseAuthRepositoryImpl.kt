@@ -119,6 +119,10 @@ class FireBaseAuthRepositoryImpl(
         }
     }
 
+    override suspend fun sendPasswordResetEmail(email: String): Flow<Resource<String>> {
+        TODO("Not yet implemented")
+    }
+
     private suspend fun login(
         provider: AuthProvider,
         signInRequest: suspend () -> AuthResult,
