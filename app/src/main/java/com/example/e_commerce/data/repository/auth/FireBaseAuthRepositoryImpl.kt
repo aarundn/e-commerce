@@ -120,7 +120,19 @@ class FireBaseAuthRepositoryImpl(
     }
 
     override suspend fun sendPasswordResetEmail(email: String): Flow<Resource<String>> {
-        TODO("Not yet implemented")
+        return flow {
+            try {
+                emit(Resource.Loading())
+                auth.sendPasswordResetEmail(email).await()
+                emit(Resource.Success("Password reset email sent"))
+            } catch (e: Exception) {
+                logAuthIssueToCrashlytics(
+                    e.message ?: "Unknown error from exception = ${e::class.java}",
+                    AuthProvider.EMAIL.name
+                )
+                emit(Resource.Error(e)) // Emit error
+            }
+        }
     }
 
     private suspend fun login(
