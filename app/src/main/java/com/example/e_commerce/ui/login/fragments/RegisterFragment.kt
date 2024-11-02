@@ -1,6 +1,7 @@
 package com.example.e_commerce.ui.login.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,9 +15,14 @@ import com.example.e_commerce.R
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentRegisterBinding
 import com.example.e_commerce.ui.common.views.ProgressDialog
+import com.example.e_commerce.ui.login.fragments.LoginFragment.Companion
 import com.example.e_commerce.ui.login.viewmodel.RegisterViewModel
 import com.example.e_commerce.ui.login.viewmodel.RegisterViewModelFactory
 import com.example.e_commerce.ui.showSnakeBarError
+import com.example.e_commerce.utils.CrashlyticsUtils
+import com.example.e_commerce.utils.LoginException
+import com.example.e_commerce.utils.RegisterException
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 class RegisterFragment : Fragment() {
@@ -53,7 +59,7 @@ class RegisterFragment : Fragment() {
                 when(resource) {
                     is Resource.Success -> {
                         progressDialog.dismiss()
-                        showLoginSuccess()
+                        showRegisterSuccess()
                     }
                     is Resource.Error -> {
                         val msg = resource.exception?.message ?: getString(R.string.try_again_later)
@@ -65,6 +71,8 @@ class RegisterFragment : Fragment() {
                         view?.showSnakeBarError(
                             resource.exception?.message ?: getString(R.string.try_again_later)
                         )
+                        logAuthIssueToCrashlytics(msg, "Register with email and password")
+                        Log.d(TAG, "initViewModel: ${resource.exception?.message}")
                     }
                     is Resource.Loading -> {
                        progressDialog.show()
@@ -74,9 +82,9 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun showLoginSuccess() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Login success")
+    private fun showRegisterSuccess() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Register success")
             .setMessage("You have successfully registered we have " +
                     "sent you a verification email please verify your email to login")
             .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
@@ -93,6 +101,19 @@ class RegisterFragment : Fragment() {
         binding.loginTv.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    private fun logAuthIssueToCrashlytics(msg: String, provider: String) {
+        CrashlyticsUtils.sendCustomLogToCrashlytics<RegisterException>(
+            msg,
+            CrashlyticsUtils.REGISTER_KEY to msg,
+            CrashlyticsUtils.LOGIN_PROVIDER to provider,
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {
