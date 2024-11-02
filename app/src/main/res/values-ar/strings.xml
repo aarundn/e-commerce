@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">E-commerce</string>
+    <string name="sign_in_to_continue">Sign in to continue</string>
+    <string name="or">Or</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="welcome_to_lafyuu" >Welcome to E-commerce</string>
+    <string name="register">Register</string>
+    <string name="with_facebook">With Facebook</string>
+    <string name="with_google">With Google</string>
+    <string name="your_email">Your Email</string>
+    <string name="your_password">Your Password</string>
+    <string name="loading">Loading\n</string>
+    <string name="ok">Ok</string>
+    <string name="retry">retry</string>
+    <string name="google_sign_in_was_canceled_or_failed">Google sign in was canceled or failed</string>
+    <string name="try_again_later">Error pleas try again later.</string>
+    <string name="create_an_new_account">Create an new account</string>
+    <string name="get_started">Let’s Get Started</string>
+    <string name="sign_up">Sign up</string>
+    <string name="have_a_account">have a account?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="full_name">Full name</string>
+    <string name="confirm_pass">Confirm Password</string>
+    <string name="forget_password_msg">Enter your email, to send an email to update your password.</string>
+    <string name="send">Send</string>
+</resources>
