@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="viewmodel"
+            type="com.example.e_commerce.ui.login.viewmodel.RegisterViewModel"/>
+    </data>
+    <androidx.core.widget.NestedScrollView
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/icon"
+                android:layout_gravity="center"
+                android:layout_marginTop="45dp"/>
+            <TextView
+                android:layout_margin="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/get_started"
+                style="@style/LargeTileStyle"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_an_new_account"
+                style="@style/SmallTileStyle"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/user"
+                app:boxStrokeWidth="0.5dp"
+                app:startIconCheckable="true"
+                app:startIconTint="@color/neutral_grey"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fullNameEdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/SmallTileStyle"
+                    android:text="@={viewmodel.name}"
+                    android:textStyle="bold"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/full_name" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/email"
+                app:boxStrokeWidth="0.5dp"
+                app:startIconCheckable="true"
+                app:startIconTint="@color/neutral_grey"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailEdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/SmallTileStyle"
+                    android:text="@={viewmodel.email}"
+                    android:textStyle="bold"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/your_email" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/passowrd"
+                app:startIconCheckable="true"
+                app:passwordToggleEnabled="true"
+                app:boxStrokeWidth="0.5dp"
+                app:startIconTint="@color/neutral_grey"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordEdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={viewmodel.password}"
+                    style="@style/SmallTileStyle"
+                    android:textStyle="bold"
+                    android:inputType="textPassword"
+                    android:hint="@string/your_password" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/passowrd"
+                app:startIconCheckable="true"
+                app:passwordToggleEnabled="true"
+                app:boxStrokeWidth="0.5dp"
+                app:startIconTint="@color/neutral_grey"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confirmPasswordEdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={viewmodel.confirmPassword}"
+                    style="@style/SmallTileStyle"
+                    android:textStyle="bold"
+                    android:inputType="textPassword"
+                    android:hint="@string/confirm_pass" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/signUpBtn"
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:text="@string/sign_up"
+                android:background="@drawable/button_back"
+                style="@style/ButtonStyle"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/SmallTileStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/have_a_account" />
+
+                <TextView
+                    android:id="@+id/login_tv"
+                    style="@style/MediumPrimaryTextViewStyle"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/sign_in"
+                    android:layout_width="0dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>
