@@ -14,48 +14,31 @@ import androidx.navigation.fragment.findNavController
 import com.example.e_commerce.R
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentRegisterBinding
-import com.example.e_commerce.ui.common.views.ProgressDialog
-import com.example.e_commerce.ui.login.fragments.LoginFragment.Companion
+import com.example.e_commerce.ui.common.fragments.BaseFragment
 import com.example.e_commerce.ui.login.viewmodel.RegisterViewModel
 import com.example.e_commerce.ui.login.viewmodel.RegisterViewModelFactory
 import com.example.e_commerce.ui.showSnakeBarError
 import com.example.e_commerce.utils.CrashlyticsUtils
-import com.example.e_commerce.utils.LoginException
 import com.example.e_commerce.utils.RegisterException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
-class RegisterFragment : Fragment() {
+class RegisterFragment : BaseFragment<FragmentRegisterBinding, RegisterViewModel>() {
 
 
-    private val progressDialog by lazy {
-        ProgressDialog.createProgressDialog(requireActivity())
-    }
-
-    private  var _binding: FragmentRegisterBinding? = null
-    private val binding get() = _binding!!
-    private val registerViewModel : RegisterViewModel by viewModels {
+    override val viewModel: RegisterViewModel by viewModels {
         RegisterViewModelFactory(requireActivity())
     }
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewmodel = registerViewModel
-        return binding.root
-    }
+    override fun getLayoutRes(): Int = R.layout.fragment_register
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun init() {
         initListeners()
         initViewModel()
     }
 
     private fun initViewModel() {
         lifecycleScope.launch {
-            registerViewModel.registerState.collect { resource ->
+            viewModel.registerState.collect { resource ->
                 when(resource) {
                     is Resource.Success -> {
                         progressDialog.dismiss()
@@ -96,7 +79,7 @@ class RegisterFragment : Fragment() {
 
     private fun initListeners() {
         binding.signUpBtn.setOnClickListener {
-            registerViewModel.registerWithEmailAndPassWord()
+            viewModel.registerWithEmailAndPassWord()
         }
         binding.loginTv.setOnClickListener {
             findNavController().popBackStack()
@@ -111,10 +94,6 @@ class RegisterFragment : Fragment() {
         )
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
 
     companion object {
         const val TAG = "RegisterFragment"
