@@ -19,6 +19,7 @@ import com.example.e_commerce.R
 
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentLoginBinding
+import com.example.e_commerce.ui.common.fragments.BaseFragment
 import com.example.e_commerce.ui.common.views.ProgressDialog
 import com.example.e_commerce.ui.home.MainActivity
 import com.example.e_commerce.ui.login.viewmodel.LoginViewModel
@@ -41,37 +42,20 @@ import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.launch
 
 
-class LoginFragment : Fragment() {
-    private val progressDialog by lazy {
-        ProgressDialog.createProgressDialog(requireActivity())
-    }
-    private val loginViewModel: LoginViewModel by viewModels {
+class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(){
+
+    override val viewModel: LoginViewModel by viewModels {
             LoginViewModelFactory(contextValue = requireActivity())
     }
     private val callbackManager: CallbackManager by lazy { CallbackManager.Factory.create() }
     private val loginManager: LoginManager by lazy { LoginManager.getInstance() }
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
-    private var _binding: FragmentLoginBinding? = null
-    private val binding get() = _binding!!
+    override fun getLayoutRes(): Int = R.layout.fragment_login
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = this
-        binding.viewmodel = loginViewModel
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun init() {
         initListeners()
         initViewModel()
-
         loginLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -83,7 +67,7 @@ class LoginFragment : Fragment() {
     private fun initListeners() {
 
         binding.signInBtn.setOnClickListener {
-            loginViewModel.login()
+            viewModel.login()
         }
         binding.googleSigninBtn.setOnClickListener {
             loginWithGoogle()
@@ -115,7 +99,7 @@ class LoginFragment : Fragment() {
             override fun onSuccess(loginResult: LoginResult) {
 
                 val accessToken = loginResult.accessToken
-                loginViewModel.loginWithFacebook(accessToken.token)
+                viewModel.loginWithFacebook(accessToken.token)
 
             }
 
@@ -136,7 +120,7 @@ class LoginFragment : Fragment() {
 
     private fun initViewModel() {
         lifecycleScope.launch {
-            loginViewModel.loginState.collect { state ->
+            viewModel.loginState.collect { state ->
 
                 state.let {
                     when (it) {
@@ -215,7 +199,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
-        loginViewModel.loginWithGoogle(idToken)
+        viewModel.loginWithGoogle(idToken)
     }
 
     private fun logAuthIssueToCrashlytics(msg: String, provider: String) {
@@ -226,10 +210,6 @@ class LoginFragment : Fragment() {
         )
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
 
     companion object {
         private const val TAG = "LoginFragment"
