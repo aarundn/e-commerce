@@ -6,9 +6,10 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import dagger.hilt.android.HiltAndroidApp
 import io.reactivex.schedulers.Schedulers
 
-
+@HiltAndroidApp
 class MyApplication: Application() {
     override fun onCreate() {
         super.onCreate()
