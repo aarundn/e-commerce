@@ -8,14 +8,17 @@ import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.repository.auth.FireBaseAuthRepository
 import com.example.e_commerce.data.repository.auth.FireBaseAuthRepositoryImpl
 import com.example.e_commerce.utils.isEmailValid
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ForgotPasswordViewModel(
+@HiltViewModel
+class ForgotPasswordViewModel @Inject constructor(
     private val firebaseAuthRepository: FireBaseAuthRepository
 ) : ViewModel() {
 
@@ -40,18 +43,5 @@ class ForgotPasswordViewModel(
     companion object {
 
         const val TAG = "ForgetPasswordViewModel"
-    }
-}
-
-class ForgotPasswordViewModelFactory(
-    private val firebaseAuthRepository: FireBaseAuthRepository = FireBaseAuthRepositoryImpl()
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ForgotPasswordViewModel::class.java)) {
-            return ForgotPasswordViewModel(
-                firebaseAuthRepository
-            ) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

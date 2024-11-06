@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -20,10 +19,8 @@ import com.example.e_commerce.R
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentLoginBinding
 import com.example.e_commerce.ui.common.fragments.BaseFragment
-import com.example.e_commerce.ui.common.views.ProgressDialog
 import com.example.e_commerce.ui.home.MainActivity
 import com.example.e_commerce.ui.login.viewmodel.LoginViewModel
-import com.example.e_commerce.ui.login.viewmodel.LoginViewModelFactory
 import com.example.e_commerce.ui.showSnakeBarError
 import com.example.e_commerce.utils.CrashlyticsUtils
 import com.example.e_commerce.utils.LoginException
@@ -39,14 +36,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(){
 
-    override val viewModel: LoginViewModel by viewModels {
-            LoginViewModelFactory(contextValue = requireActivity())
-    }
+    override val viewModel: LoginViewModel by viewModels()
     private val callbackManager: CallbackManager by lazy { CallbackManager.Factory.create() }
     private val loginManager: LoginManager by lazy { LoginManager.getInstance() }
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>

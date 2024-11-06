@@ -11,6 +11,8 @@ import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import com.example.e_commerce.ui.common.views.ProgressDialog
+import dagger.hilt.android.AndroidEntryPoint
+
 
 abstract class BaseFragment<DB: ViewDataBinding, VM: ViewModel> : Fragment() {
 
