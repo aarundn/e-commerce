@@ -16,19 +16,19 @@ import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentRegisterBinding
 import com.example.e_commerce.ui.common.fragments.BaseFragment
 import com.example.e_commerce.ui.login.viewmodel.RegisterViewModel
-import com.example.e_commerce.ui.login.viewmodel.RegisterViewModelFactory
 import com.example.e_commerce.ui.showSnakeBarError
 import com.example.e_commerce.utils.CrashlyticsUtils
 import com.example.e_commerce.utils.RegisterException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+
+@AndroidEntryPoint
 class RegisterFragment : BaseFragment<FragmentRegisterBinding, RegisterViewModel>() {
 
 
-    override val viewModel: RegisterViewModel by viewModels {
-        RegisterViewModelFactory(requireActivity())
-    }
+    override val viewModel: RegisterViewModel by viewModels()
     override fun getLayoutRes(): Int = R.layout.fragment_register
 
     override fun init() {

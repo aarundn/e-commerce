@@ -15,23 +15,20 @@ import com.example.e_commerce.data.repository.auth.FireBaseAuthRepositoryImpl
 import com.example.e_commerce.databinding.FragmentFogotePasswordBinding
 import com.example.e_commerce.ui.common.views.ProgressDialog
 import com.example.e_commerce.ui.login.viewmodel.ForgotPasswordViewModel
-import com.example.e_commerce.ui.login.viewmodel.ForgotPasswordViewModelFactory
-import com.example.e_commerce.ui.login.viewmodel.LoginViewModelFactory
 import com.example.e_commerce.ui.showSnakeBarError
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FogotePasswordFragment : BottomSheetDialogFragment() {
     private val progressDialog by lazy {
         ProgressDialog.createProgressDialog(requireActivity())
     }
     private var _binding: FragmentFogotePasswordBinding? = null
     private val binding get() = _binding!!
-    private val forgetPasswordViewModel: ForgotPasswordViewModel by viewModels {
-        ForgotPasswordViewModelFactory()
-    }
+    private val forgetPasswordViewModel: ForgotPasswordViewModel by viewModels()
 
 
     override fun onCreateView(
