@@ -8,10 +8,13 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.e_commerce.R
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
+
         }
 }

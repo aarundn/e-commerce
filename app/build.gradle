@@ -7,6 +7,7 @@ plugins {
     id('com.google.protobuf') version "0.9.4" apply true
     id('kotlin-parcelize')
     id('kotlin-kapt')
+    id ('com.google.dagger.hilt.android')
 }
 
 android {
@@ -84,6 +85,10 @@ dependencies {
 
     //facebook sdk
     implementation libs.facebook.android.sdk
+
+    //hilt
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
 }
 
 // Define tasks for Java and Kotlin generation with 'lite' option
@@ -103,4 +108,7 @@ protobuf {
             }
         }
     }
+}
+kapt {
+    correctErrorTypes true
 }
