@@ -5,14 +5,21 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce.R
 import com.example.e_commerce.databinding.ActivityMainBinding
 import com.example.e_commerce.ui.common.viewmodel.UserViewModel
+import com.example.e_commerce.ui.home.adapter.HomeViewPagerAdapter
+import com.example.e_commerce.ui.account.fragments.AccountFragment
+import com.example.e_commerce.ui.cart.fragments.CartFragment
+import com.example.e_commerce.ui.home.fragments.HomeFragment
+import com.example.e_commerce.ui.offers.fragments.OffersFragment
+import com.example.e_commerce.ui.search.fragments.SearchFragment
 import com.example.e_commerce.ui.login.AuthActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -40,6 +47,39 @@ class MainActivity : AppCompatActivity() {
 
 
         initViewModel()
+        initViews()
+        initBottomNavigationView()
+    }
+
+    private fun initBottomNavigationView() {
+        binding.bottomNavigation.setOnItemSelectedListener {
+            when (it.itemId) {
+
+                R.id.homeFragment -> binding.homeViewPager.currentItem = 0
+                R.id.searchFragment -> binding.homeViewPager.currentItem = 1
+                R.id.cartFragement -> binding.homeViewPager.currentItem = 2
+                R.id.offerFragment -> binding.homeViewPager.currentItem = 3
+                R.id.uerFragment -> binding.homeViewPager.currentItem = 4
+            }
+            true
+    }
+}
+
+    private fun initViews() {
+        val fragments = listOf<Fragment>(
+            HomeFragment(),
+            CartFragment(),
+            AccountFragment(),
+            OffersFragment(),
+            SearchFragment()
+        )
+        binding.homeViewPager.offscreenPageLimit = fragments.size
+        binding.homeViewPager.adapter  = HomeViewPagerAdapter(this, fragments)
+        binding.homeViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                binding.bottomNavigation.menu.getItem(position).isChecked = true
+            }
+        })
     }
 
     private fun initViewModel() {
