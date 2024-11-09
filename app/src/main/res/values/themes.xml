@@ -64,4 +64,25 @@
         <item name="textAllCaps">false</item>
         <item name="android:padding">16dp</item>
     </style>
+    <style name="BottomNavTextAppearance" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@font/poppins_regular</item> <!-- Use your custom font here -->
+        <item name="android:textSize">12sp</item> <!-- Customize text size -->
+        <item name="android:textColor">@drawable/bottom_selector</item> <!-- Customize text color if needed -->
+    </style>
+    <style name="CustomBottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@null</item>
+        <item name="itemTextAppearance">@style/BottomNavTextAppearance</item>
+        <item name="rippleColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.BottomNavigationView"
+        parent="Widget.Design.BottomNavigationView">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="selectedLabBottomNav"
+        parent="Widget.Design.BottomNavigationView">
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

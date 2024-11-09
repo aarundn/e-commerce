@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.example.e_commerce.R
+import com.example.e_commerce.databinding.ActivityMainBinding
 import com.example.e_commerce.ui.common.viewmodel.UserViewModel
 import com.example.e_commerce.ui.login.AuthActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +21,10 @@ import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     private val userViewModel: UserViewModel by viewModels ()
+    private var _binding: ActivityMainBinding? = null
+    private val binding  get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initSplashScreen()
@@ -31,10 +35,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        setContentView(R.layout.activity_main)
-        findViewById<View>(R.id.text).setOnClickListener {
-            logOut()
-        }
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
 
         initViewModel()
     }
@@ -82,6 +85,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
     companion object {
         private const val TAG = "MainActivity"
     }
