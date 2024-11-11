@@ -89,6 +89,10 @@ dependencies {
     //hilt
     implementation libs.hilt.android
     kapt libs.hilt.compiler
+
+    //glide
+    implementation libs.glide
+    annotationProcessor libs.compiler
 }
 
 // Define tasks for Java and Kotlin generation with 'lite' option
