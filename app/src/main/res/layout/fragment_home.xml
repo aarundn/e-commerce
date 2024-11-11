@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.example.e_commerce.ui.home.viewmodel.HomeViewModel" />
@@ -96,6 +95,28 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
                     android:background="@color/neutral_light" />
+
+                <com.example.e_commerce.utils.NestedScrollableHost
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/sale_ads_view_pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:background="@drawable/sale_ad_item_background"
+                        android:nestedScrollingEnabled="false"
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+                </com.example.e_commerce.utils.NestedScrollableHost>
+
+                <LinearLayout
+                    android:id="@+id/indicator_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
