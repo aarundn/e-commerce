@@ -4,6 +4,8 @@ import com.example.e_commerce.data.repository.auth.FireBaseAuthRepository
 import com.example.e_commerce.data.repository.auth.FireBaseAuthRepositoryImpl
 import com.example.e_commerce.data.repository.common.AppDataStoreRepositoryImpl
 import com.example.e_commerce.data.repository.common.AppPreferenceRepository
+import com.example.e_commerce.data.repository.home.SalesAdsRepository
+import com.example.e_commerce.data.repository.home.SalesAdsRepositoryImpl
 import com.example.e_commerce.data.repository.user.UserFirestoreRepository
 import com.example.e_commerce.data.repository.user.UserFirestoreRepositoryImpl
 import com.example.e_commerce.data.repository.user.UserPreferenceRepository
@@ -42,5 +44,13 @@ abstract class RepositoryModule {
     abstract fun userFireStoreRepository(
         userFireStoreRepository : UserFirestoreRepositoryImpl
     ): UserFirestoreRepository
+
+    @Binds
+    @Singleton
+    abstract fun salesAdsRepository(
+        salesAdsRepositoryImpl: SalesAdsRepositoryImpl
+    ): SalesAdsRepository
+
+
 }
 
