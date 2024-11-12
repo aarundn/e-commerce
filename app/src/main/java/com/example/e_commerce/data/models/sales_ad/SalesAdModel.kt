@@ -36,8 +36,8 @@ data class SalesAdModel(
     @set:PropertyName("end_at")
     var endAt: Date? = null
 ) : Parcelable {
-    fun toUIModel() : SalesAdModel {
-        return SalesAdModel(
+    fun toUIModel() : SalesUiAdModel {
+        return SalesUiAdModel(
             id = this.id,
             title = this.title,
             imageUrl = this.imageUrl,

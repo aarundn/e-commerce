@@ -1,18 +1,11 @@
 package com.example.e_commerce.ui.home.fragments
 
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce.R
 import com.example.e_commerce.data.models.Resource
@@ -21,11 +14,9 @@ import com.example.e_commerce.ui.common.fragments.BaseFragment
 import com.example.e_commerce.ui.home.adapter.SalesAdAdapter
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import com.example.e_commerce.ui.home.viewmodel.HomeViewModel
-import com.example.e_commerce.ui.login.viewmodel.LoginViewModel
 import com.example.e_commerce.utils.DepthPageTransformer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -52,7 +43,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
             viewModel.salesAdsStateTamp.collect{ source ->
                 when(source){
                     is Resource.Success -> {
-                        Log.d("HomeFragment", "initViewModel: ${source.data}")
+                        initSalesAdsView(source.data)
                     }
                     is Resource.Error -> {
                         Log.d("HomeFragment", "initViewModel: ${source.exception?.message}")
@@ -67,43 +58,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
     }
 
     private fun initViews() {
-        initSalesAdsView()
+
     }
 
-    private fun initSalesAdsView() {
-        val salesAds = listOf(
-            SalesUiAdModel(
-                title = "Super Flash Sale\n" +
-                        "50% Off",
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/e-commerce-b134b.appspot.com/o/promo_image.png?alt=media&token=f5709168-3afe-4335-be55-ed25ae8afe91",
-                endAt = System.currentTimeMillis() + 7200000
-            ),
-            SalesUiAdModel(
-                title = "Super Flash Sale\n" +
-                        "50% Off",
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/e-commerce-b134b.appspot.com/o/promo_image.png?alt=media&token=f5709168-3afe-4335-be55-ed25ae8afe91",
-                endAt = System.currentTimeMillis() + 3600000
-            ),
-            SalesUiAdModel(
-                title = "Super Flash Sale\n" +
-                        "50% Off",
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/e-commerce-b134b.appspot.com/o/promo_image.png?alt=media&token=f5709168-3afe-4335-be55-ed25ae8afe91",
-                endAt = System.currentTimeMillis() + 3600000
-            ),
-            SalesUiAdModel(
-                title = "Super Flash Sale\n" +
-                        "50% Off",
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/e-commerce-b134b.appspot.com/o/promo_image.png?alt=media&token=f5709168-3afe-4335-be55-ed25ae8afe91",
-                endAt = System.currentTimeMillis() + 3600000
-            ),
-            SalesUiAdModel(
-                title = "Super Flash Sale\n" +
-                        "50% Off",
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/e-commerce-b134b.appspot.com/o/promo_image.png?alt=media&token=f5709168-3afe-4335-be55-ed25ae8afe91",
-                endAt = System.currentTimeMillis() + 3600000
-            )
-        )
-        setupDots(salesAds.size)
+    private fun initSalesAdsView(salesAds: List<SalesUiAdModel>?) {
+
+
+        setupDots(salesAds!!.size)
         updateDots(0)
         val adapter = SalesAdAdapter(salesAds)
         binding.saleAdsViewPager.adapter = adapter

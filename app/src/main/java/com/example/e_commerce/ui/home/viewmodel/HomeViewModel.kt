@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.sales_ad.SalesAdModel
 import com.example.e_commerce.data.repository.home.SalesAdsRepository
+import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,7 @@ class HomeViewModel @Inject constructor(
     private val salesAdsRepository: SalesAdsRepository
 ): ViewModel() {
 
-    val salesAdsStateTamp: StateFlow<Resource<List<SalesAdModel>>> = salesAdsRepository.getSalesAds().stateIn(
+    val salesAdsStateTamp: StateFlow<Resource<List<SalesUiAdModel>>> = salesAdsRepository.getSalesAds().stateIn(
         viewModelScope + IO,
             SharingStarted.Eagerly,
         Resource.Loading())
