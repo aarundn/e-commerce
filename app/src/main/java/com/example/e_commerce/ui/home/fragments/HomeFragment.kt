@@ -44,11 +44,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
                 when(source){
                     is Resource.Success -> {
                         initSalesAdsView(source.data)
+                        binding.saleAdsShimmerView.root.stopShimmer()
+                        binding.saleAdsShimmerView.root.visibility = View.GONE
                     }
                     is Resource.Error -> {
                         Log.d("HomeFragment", "initViewModel: ${source.exception?.message}")
                     }
                     is Resource.Loading -> {
+                        binding.saleAdsShimmerView.root.startShimmer()
                         Log.d("HomeFragment", "initViewModel: Loading")
                     }
                 }
