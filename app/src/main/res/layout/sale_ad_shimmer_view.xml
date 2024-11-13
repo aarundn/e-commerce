@@ -77,6 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
+                android:fontFamily="@font/poppins_bold"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 tools:text=":" />
