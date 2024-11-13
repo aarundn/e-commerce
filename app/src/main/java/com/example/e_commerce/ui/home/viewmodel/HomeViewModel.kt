@@ -28,18 +28,11 @@ class HomeViewModel @Inject constructor(
             SharingStarted.Eagerly,
         Resource.Loading())
 
-//    private var _salesAds : MutableStateFlow<Resource<List<SalesAdModel>>> =
-//        MutableStateFlow(Resource.Loading())
-//    val salesAds = _salesAds.asStateFlow()
-//
-//    init {
-//        getSalesAds()
-//    }
-//
-//    private fun getSalesAds()  = viewModelScope.launch(IO) {
-//        salesAdsRepository.getSalesAds().collectLatest {
-//            _salesAds.value = it
-//        }
-//    }
+    fun stopTimer() {
+        salesAdsStateTamp.value.data?.forEach { it.stopCountdown() }
+    }
+    fun startTimer() {
+        salesAdsStateTamp.value.data?.forEach { it.startCountdown() }
+    }
 
 }

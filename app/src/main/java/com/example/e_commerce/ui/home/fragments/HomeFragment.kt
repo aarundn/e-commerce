@@ -69,7 +69,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
 
         setupDots(salesAds!!.size)
         updateDots(0)
-        val adapter = SalesAdAdapter(salesAds)
+        val adapter = SalesAdAdapter(lifecycleScope,salesAds)
         binding.saleAdsViewPager.adapter = adapter
         binding.saleAdsViewPager.setPageTransformer(DepthPageTransformer())
 
