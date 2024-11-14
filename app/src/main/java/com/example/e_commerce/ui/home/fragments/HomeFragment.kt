@@ -116,17 +116,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
 
     private var autoScrollJob: Job? = null
     private fun autoScroll(totalPages: Int) {
+
+        var direction = 1  // 1 for forward, -1 for backward
+
         autoScrollJob = CoroutineScope(IO).launch {
             while (isActive) {
                 delay(5000)
-                withContext(Main){
-                    if (binding.saleAdsViewPager.currentItem + 1 > totalPages - 1) {
-                        binding.saleAdsViewPager.currentItem = 0
-                    } else {
-                        binding.saleAdsViewPager.currentItem++
+                withContext(Main) {
+                    binding.saleAdsViewPager.currentItem += direction
+                    if (binding.saleAdsViewPager.currentItem == totalPages - 1 || binding.saleAdsViewPager.currentItem == 0) {
+                        direction *= -1
                     }
                 }
-
             }
         }
     }

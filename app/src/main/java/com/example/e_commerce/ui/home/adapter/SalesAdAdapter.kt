@@ -30,8 +30,10 @@ class SalesAdAdapter(
             binding.lifecycleScope = lifecycleScope
             binding.salesAd = salesAd
             binding.executePendingBindings()
+
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SalesAdViewHolder {
         val binding = ItemSalesAdBinding.inflate(LayoutInflater.from(parent.context), parent, false)
