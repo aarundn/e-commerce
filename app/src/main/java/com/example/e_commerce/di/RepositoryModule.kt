@@ -2,6 +2,8 @@ package com.example.e_commerce.di
 
 import com.example.e_commerce.data.repository.auth.FireBaseAuthRepository
 import com.example.e_commerce.data.repository.auth.FireBaseAuthRepositoryImpl
+import com.example.e_commerce.data.repository.category.CategoryRepository
+import com.example.e_commerce.data.repository.category.CategoryRepositoryImpl
 import com.example.e_commerce.data.repository.common.AppDataStoreRepositoryImpl
 import com.example.e_commerce.data.repository.common.AppPreferenceRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepository
@@ -51,6 +53,11 @@ abstract class RepositoryModule {
         salesAdsRepositoryImpl: SalesAdsRepositoryImpl
     ): SalesAdsRepository
 
+    @Binds
+    @Singleton
+    abstract fun categoryRepository(
+        categoryRepositoryImpl: CategoryRepositoryImpl
+    ): CategoryRepository
 
 }
 

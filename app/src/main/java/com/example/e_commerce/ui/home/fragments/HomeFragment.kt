@@ -6,12 +6,16 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.e_commerce.R
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentHomeBinding
 import com.example.e_commerce.ui.common.fragments.BaseFragment
+import com.example.e_commerce.ui.home.adapter.CategoriesAdapter
 import com.example.e_commerce.ui.home.adapter.SalesAdAdapter
+import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import com.example.e_commerce.ui.home.viewmodel.HomeViewModel
 import com.example.e_commerce.utils.DepthPageTransformer
@@ -21,6 +25,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -51,7 +56,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
                         Log.d("HomeFragment", "initViewModel: ${source.exception?.message}")
                     }
                     is Resource.Loading -> {
-                        binding.saleAdsShimmerView.root.startShimmer()
+
                         Log.d("HomeFragment", "initViewModel: Loading")
                     }
                 }
@@ -61,8 +66,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
     }
 
     private fun initViews() {
-
+        initCategories()
     }
+
+    private fun initCategories() {
+        lifecycleScope.launch {
+            viewModel.categoryState.collect { source ->
+                when(source){
+                    is Resource.Success -> {
+                        initCategoryRecycler(source)
+                        Log.d("HomeFragment", "initCategories: success")
+
+                    }
+                    is Resource.Error -> {
+                        Log.d("HomeFragment", "initCategories: ${source.exception?.message}")
+                    }
+                    is Resource.Loading -> {
+                        Log.d("HomeFragment", "initCategories: Loading")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initCategoryRecycler(source: Resource<List<CategoryUIModel>>) {
+        binding.categoriesRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+        binding.categoriesRecyclerView.setHasFixedSize(true)
+
+        // Check if data is available
+        source.data?.let { data ->
+            val adapter = CategoriesAdapter(data)
+            binding.categoriesRecyclerView.adapter = adapter
+        }
+    }
+
 
     private fun initSalesAdsView(salesAds: List<SalesUiAdModel>?) {
 

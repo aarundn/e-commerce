@@ -26,7 +26,6 @@ data class SalesUiAdModel(
         endAt?.let {
             timer?.stop()
             timer = CountdownTimer(it) { hours, minutes, seconds ->
-                Log.d("CountdownTimer", "hours: $hours, minutes: $minutes, seconds: $seconds")
                 this.hours.value = hours.toString()
                 this.seconds.value = seconds.toString()
                 this.minutes.value = minutes.toString()
