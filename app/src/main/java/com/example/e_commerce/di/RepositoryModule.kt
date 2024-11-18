@@ -8,6 +8,8 @@ import com.example.e_commerce.data.repository.common.AppDataStoreRepositoryImpl
 import com.example.e_commerce.data.repository.common.AppPreferenceRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepositoryImpl
+import com.example.e_commerce.data.repository.products.ProductRepository
+import com.example.e_commerce.data.repository.products.ProductRepositoryImpl
 import com.example.e_commerce.data.repository.user.UserFirestoreRepository
 import com.example.e_commerce.data.repository.user.UserFirestoreRepositoryImpl
 import com.example.e_commerce.data.repository.user.UserPreferenceRepository
@@ -58,6 +60,12 @@ abstract class RepositoryModule {
     abstract fun categoryRepository(
         categoryRepositoryImpl: CategoryRepositoryImpl
     ): CategoryRepository
+
+    @Binds
+    @Singleton
+    abstract fun productRepository(
+        productRepositoryImpl: ProductRepositoryImpl
+    ): ProductRepository
 
 }
 
