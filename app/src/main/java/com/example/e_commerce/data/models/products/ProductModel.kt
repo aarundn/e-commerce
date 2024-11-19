@@ -19,7 +19,7 @@ data class ProductModel(
 
     var images: List<String>? = null,
     var prices: List<ProductPriceModel>? = null,
-    var rate: Float? = null,
+    var rate: Double? = null,
 
     @get:PropertyName("offer_percentage")
     @set:PropertyName("offer_percentage")

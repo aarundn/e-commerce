@@ -1,5 +1,6 @@
 package com.example.e_commerce.data.repository.products
 
+import android.util.Log
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,19 +30,22 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getSaleProducts(countryId: String,saleType:String, pageLimit: Int) = flow {
-        emit(Resource.Loading())
-        try {
+    override fun getSaleProducts(
+        countryId: String,saleType:String, pageLimit: Int
+    ):Flow<List<ProductModel>>
+    {
+        return flow {
+
             val products = firestore.collection("products")
-                .whereEqualTo("countries.nOiEWvbFJGrA7z58XQ52.sale_type", saleType)
+                .whereEqualTo("countries.${countryId}.sale_type", saleType)
                 .limit(pageLimit.toLong())
                 .get()
                 .await()
                 .toObjects(ProductModel::class.java)
-            emit(Resource.Success(products))
-        } catch (e: Exception) {
-            emit(Resource.Error(Exception(e.message)))
+            Log.d("ProductRepositoryImpl", "getSaleProducts: $products")
+
         }
     }
+
 
 }

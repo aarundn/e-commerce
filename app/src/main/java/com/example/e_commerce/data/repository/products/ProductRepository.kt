@@ -15,5 +15,5 @@ interface ProductRepository {
         countryId: String,
         saleType: String,
         pageLimit: Int
-    ): Flow<Resource<List<ProductModel>>>
+    ): Flow<List<ProductModel>>
 }

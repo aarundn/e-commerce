@@ -41,9 +41,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
     override fun init() {
         initViews()
         initViewModel()
+
     }
 
     private fun initViewModel() {
+        lifecycleScope.launch {
+            viewModel.getSaleProduct()
+        }
         lifecycleScope.launch {
             viewModel.salesAdsStateTamp.collect{ source ->
                 when(source){
@@ -62,7 +66,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
                 }
             }
 
+
         }
+
     }
 
     private fun initViews() {

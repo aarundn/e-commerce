@@ -1,11 +1,15 @@
 package com.example.e_commerce.ui.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce.data.models.Resource
+import com.example.e_commerce.data.models.products.ProductModel
+import com.example.e_commerce.data.models.products.ProductSaleType
 import com.example.e_commerce.data.models.sales_ad.SalesAdModel
 import com.example.e_commerce.data.repository.category.CategoryRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepository
+import com.example.e_commerce.data.repository.products.ProductRepository
 import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,9 +27,12 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val salesAdsRepository: SalesAdsRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val productRepository: ProductRepository
 ): ViewModel() {
 
+    private val _saleProductState = MutableStateFlow<Resource<List<ProductModel>>>(Resource.Loading())
+    val saleProductState = _saleProductState.asStateFlow()
     val salesAdsStateTamp: StateFlow<Resource<List<SalesUiAdModel>>> = salesAdsRepository.getSalesAds().stateIn(
         viewModelScope + IO,
             SharingStarted.Eagerly,
@@ -46,6 +53,15 @@ class HomeViewModel @Inject constructor(
             categoryRepository.getCategories().collect { source ->
                 _categoryState.value = source
             }
+        }
+    }
+    fun getSaleProduct() =
+        viewModelScope.launch(IO) {
+            productRepository.getSaleProducts(
+                "nOiEWvbFJGrA7z58XQ52",
+                ProductSaleType.FLASH_SALE.type,
+                10).collectLatest { source ->
+                Log.d("HomeViewModel", "getSaleProduct: $source")
         }
     }
 }
