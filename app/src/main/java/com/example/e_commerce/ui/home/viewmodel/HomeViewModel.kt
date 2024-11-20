@@ -10,6 +10,7 @@ import com.example.e_commerce.data.models.sales_ad.SalesAdModel
 import com.example.e_commerce.data.repository.category.CategoryRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepository
 import com.example.e_commerce.data.repository.products.ProductRepository
+import com.example.e_commerce.data.repository.user.UserPreferenceRepository
 import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -28,7 +30,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val salesAdsRepository: SalesAdsRepository,
     private val categoryRepository: CategoryRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val userPreferenceRepository: UserPreferenceRepository
 ): ViewModel() {
 
     private val _saleProductState = MutableStateFlow<Resource<List<ProductModel>>>(Resource.Loading())
@@ -57,8 +60,9 @@ class HomeViewModel @Inject constructor(
     }
     fun getSaleProduct() =
         viewModelScope.launch(IO) {
+            val countryId = userPreferenceRepository.getUserCountry().first()
             productRepository.getSaleProducts(
-                "nOiEWvbFJGrA7z58XQ52",
+                countryId.id,
                 ProductSaleType.FLASH_SALE.type,
                 10).collectLatest { source ->
                 Log.d("HomeViewModel", "getSaleProduct: $source")

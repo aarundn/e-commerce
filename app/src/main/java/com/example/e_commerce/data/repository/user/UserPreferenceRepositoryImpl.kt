@@ -49,6 +49,6 @@ class UserPreferenceRepositoryImpl @Inject constructor(val context: Application)
     }
 
     override fun getUserCountry(): Flow<CountryData> {
-        TODO("Not yet implemented")
+        return context.userDetailsDataStore.data.map { it.country }
     }
 }

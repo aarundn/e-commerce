@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 @HiltViewModel
 class CountriesViewModel @Inject constructor(
-    private val countryRepository : CountriesRepository,
+    countryRepository : CountriesRepository,
     private val userPreferenceRepository: UserPreferenceRepository
 ): ViewModel() {
 
