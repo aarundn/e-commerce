@@ -3,6 +3,7 @@ package com.example.e_commerce.data.repository.products
 import android.util.Log
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -37,7 +38,7 @@ class ProductRepositoryImpl @Inject constructor(
         return flow {
 
             val products = firestore.collection("products")
-                .whereEqualTo("countries.${countryId}.sale_type", saleType)
+                .whereEqualTo(FieldPath.of("countries",countryId,"sale_type"), saleType)
                 .limit(pageLimit.toLong())
                 .get()
                 .await()
