@@ -57,6 +57,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(){
         ) { result ->
             callbackManager.onActivityResult(result.resultCode, result.resultCode, result.data)
         }
+
+        CountriesFragment().show(
+            requireActivity().supportFragmentManager,
+            "CountriesFragment"
+        )
     }
 
 

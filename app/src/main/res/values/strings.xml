@@ -36,4 +36,5 @@
     <string name="search_products">Search Product</string>
     <string name="category">Category</string>
     <string name="more_categories">more Categories</string>
+    <string name="select_country_msg">Please select your country</string>
 </resources>

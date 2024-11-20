@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
 
         <variable
             name="viewmodel"
-            type="com.training.ecommerce.ui.auth.viewmodel.CountriesViewModel" />
+            type="com.example.e_commerce.ui.login.viewmodel.CountriesViewModel" />
     </data>
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,10 +28,11 @@
                 android:background="@color/neutral_grey" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                style="@style/TitleTextStyle"
+                style="@style/LargeTileStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                tools:text = "Please select your country"
                 android:layout_marginTop="16dp"
                 android:text="@string/select_country_msg" />
 
@@ -49,6 +48,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:indeterminateTint="@color/primaryColor"
             android:layout_centerInParent="true"
             android:padding="16sp" />
 
