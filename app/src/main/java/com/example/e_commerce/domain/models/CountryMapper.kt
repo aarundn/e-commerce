@@ -10,7 +10,7 @@ fun CountryModel.toUIModel(): CountryUiModel {
         name = name,
         code = code,
         currency = currency,
-        currencySymbol = currency_symbol,
-        flagUrl = flag_url
+        currencySymbol = currencySymbol,
+        flagUrl = flagUrl
     )
 }

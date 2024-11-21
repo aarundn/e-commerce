@@ -18,6 +18,7 @@ import com.example.e_commerce.ui.home.adapter.SalesAdAdapter
 import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import com.example.e_commerce.ui.home.viewmodel.HomeViewModel
+import com.example.e_commerce.ui.products.adapter.ProductAdapter
 import com.example.e_commerce.utils.DepthPageTransformer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -42,10 +43,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
         initViewModel()
 
     }
+    private fun initViews() {
+        initCategories()
+        initRecycler()
+    }
 
+    private fun initRecycler() {
+
+        lifecycleScope.launch {
+            viewModel.flashSaleState.collect{
+                Log.d("HomeFragment", "initViewModel: $it")
+                val flashSaleAdapter = ProductAdapter()
+                flashSaleAdapter.submitList(it)
+                binding.flashSaleProductsRv.apply {
+                    adapter = flashSaleAdapter
+                    layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+                    setHasFixedSize(true)
+
+                }
+            }
+        }
+
+    }
     private fun initViewModel() {
         lifecycleScope.launch {
-            viewModel.getSaleProduct()
+           // viewModel.getSaleProduct()
         }
         lifecycleScope.launch {
             viewModel.salesAdsStateTamp.collect{ source ->
@@ -70,9 +92,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
 
     }
 
-    private fun initViews() {
-        initCategories()
-    }
+
+
+
+
 
     private fun initCategories() {
         lifecycleScope.launch {
@@ -93,6 +116,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
             }
         }
     }
+
 
     private fun initCategoryRecycler(source: Resource<List<CategoryUIModel>>) {
         binding.categoriesRecyclerView.layoutManager =

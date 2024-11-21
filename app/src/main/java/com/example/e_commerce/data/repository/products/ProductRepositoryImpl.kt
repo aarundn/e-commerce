@@ -38,11 +38,17 @@ class ProductRepositoryImpl @Inject constructor(
         return flow {
 
             val products = firestore.collection("products")
-                .whereEqualTo(FieldPath.of("countries",countryId,"sale_type"), saleType)
+                .whereEqualTo("sale_type", saleType)
+                .orderBy("price")
                 .limit(pageLimit.toLong())
                 .get()
                 .await()
                 .toObjects(ProductModel::class.java)
+            val repeatProducts = mutableListOf<ProductModel>()
+                repeat(10) {
+                    repeatProducts.addAll(products)
+                }
+            emit(repeatProducts)
             Log.d("ProductRepositoryImpl", "getSaleProducts: $products")
 
         }

@@ -2,7 +2,7 @@ package com.example.e_commerce.data.models.auth
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import com.google.firebase.database.PropertyName
+import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
 
 @Keep
@@ -12,7 +12,12 @@ data class CountryModel(
     val name: String? = null,
     val code: String? = null,
     val currency: String? = null,
-    val currency_symbol: String? = null,
-    val flag_url : String? = null
+    @get:PropertyName("currency_symbol")
+    @set:PropertyName("currency_symbol")
+    var currencySymbol: String? = null,
+
+    @get:PropertyName("flag_url")
+    @set:PropertyName("flag_url")
+    var flagUrl : String? = null
 
 ): Parcelable

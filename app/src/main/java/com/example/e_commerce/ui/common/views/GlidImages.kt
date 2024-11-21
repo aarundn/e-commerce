@@ -6,14 +6,18 @@ import androidx.databinding.BindingAdapter
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.e_commerce.R
 
 
 @BindingAdapter("imageUrl")
 fun loadImage(view: ImageView, imageUrl: String?) {
+    val loading = getGlideCircleLoading(view)
     Glide.with(view.context)
-        .load(imageUrl)
+        .load(imageUrl).placeholder(loading)
+        .transform(CenterCrop(), RoundedCorners(16))
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .into(view)
 }
