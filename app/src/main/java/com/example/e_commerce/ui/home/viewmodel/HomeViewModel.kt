@@ -77,7 +77,7 @@ class HomeViewModel @Inject constructor(
         )
 
     }.mapLatest {
-        it.first().map { it.toProductUIModel() }
+        it.first().map { getProductModel(it) }
     }.stateIn(
         viewModelScope + IO,
         SharingStarted.Eagerly,

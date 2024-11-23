@@ -32,6 +32,5 @@ fun ProductModel.toProductUIModel(): ProductUIModel {
         offerPercentage = offerPercentage,
         saleType = saleType,
         colors = colors,
-        priceAfterSale = offerPercentage?.let { price?.minus((price!! * it) / 100) } ?: -1,
     )
 }

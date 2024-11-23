@@ -44,11 +44,8 @@ class ProductRepositoryImpl @Inject constructor(
                 .get()
                 .await()
                 .toObjects(ProductModel::class.java)
-            val repeatProducts = mutableListOf<ProductModel>()
-                repeat(10) {
-                    repeatProducts.addAll(products)
-                }
-            emit(repeatProducts)
+
+            emit(products)
             Log.d("ProductRepositoryImpl", "getSaleProducts: $products")
 
         }
