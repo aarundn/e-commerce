@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="com.example.e_commerce.ui.home.viewmodel.HomeViewModel" />
@@ -161,6 +162,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:paddingStart="16dp"
+                    android:visibilities="@{viewModel.isEmptyFlashSale}"
                     android:paddingTop="8dp"
                     android:paddingEnd="16dp"
                     android:paddingBottom="8dp"
@@ -186,6 +188,43 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:visibilities="@{viewModel.isEmptyFlashSale}"
+                    android:paddingStart="8dp"
+                    android:tag="flash_sale_rv"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                <LinearLayout
+                    android:id="@+id/mega_sale_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:visibilities="@{viewModel.isEmptyMegaSale()}"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:tag="mega_sale_layout">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/LargeTileStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/mega_sale" />
+
+                    <TextView
+                        android:id="@+id/mega_see_more_tv"
+                        style="@style/MediumPrimaryTextViewStyle"
+                        android:layout_gravity="center"
+                        android:text="@string/see_more"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/mega_sale_products_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:visibilities="@{viewModel.isEmptyMegaSale()}"
                     android:paddingStart="8dp"
                     android:tag="flash_sale_rv"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />

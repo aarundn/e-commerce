@@ -2,6 +2,7 @@ package com.example.e_commerce.ui.home.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
@@ -40,6 +41,9 @@ class HomeViewModel @Inject constructor(
     private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
 
+
+
+
     private val _saleProductState =
         MutableStateFlow<Resource<List<ProductModel>>>(Resource.Loading())
     val saleProductState = _saleProductState.asStateFlow()
@@ -69,21 +73,25 @@ class HomeViewModel @Inject constructor(
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val flashSaleState = countryState.mapLatest { country ->
-        productRepository.getSaleProducts(
-            country.id ?: "0",
-            ProductSaleType.FLASH_SALE.type,
-            10
+    fun getProductsSale(productSaleType: ProductSaleType): StateFlow<List<ProductUIModel>>  =
+        countryState.mapLatest { country ->
+            productRepository.getSaleProducts(
+                country.id ?: "0",
+                productSaleType.type,
+                10
+            )
+        }.mapLatest {
+            it.first().map { getProductModel(it) }
+        }.stateIn(
+            viewModelScope + IO,
+            SharingStarted.Eagerly,
+            emptyList()
         )
+    val flashSaleState = getProductsSale(ProductSaleType.FLASH_SALE)
+    val megaSaleState = getProductsSale(ProductSaleType.MEGA_SALE)
 
-    }.mapLatest {
-        it.first().map { getProductModel(it) }
-    }.stateIn(
-        viewModelScope + IO,
-        SharingStarted.Eagerly,
-        emptyList()
-    )
-
+    val isEmptyFlashSale = flashSaleState.map { it.isEmpty() }.asLiveData()
+    val isEmptyMegaSale = megaSaleState.map { it.isEmpty() }.asLiveData()
     private fun getProductModel(productModel: ProductModel): ProductUIModel{
         val productUiModel = productModel.toProductUIModel().copy(
             currencySymbol = countryState.value.currencySymbol,
@@ -100,15 +108,4 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getSaleProduct() =
-        viewModelScope.launch(IO) {
-            val countryId = userPreferenceRepository.getUserCountry().first()
-            productRepository.getSaleProducts(
-                countryId.id,
-                ProductSaleType.FLASH_SALE.type,
-                10
-            ).collectLatest { source ->
-                Log.d("HomeViewModel", "getSaleProduct: $source")
-            }
-        }
 }

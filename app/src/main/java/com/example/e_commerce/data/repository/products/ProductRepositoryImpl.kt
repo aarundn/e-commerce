@@ -39,6 +39,7 @@ class ProductRepositoryImpl @Inject constructor(
 
             val products = firestore.collection("products")
                 .whereEqualTo("sale_type", saleType)
+                .whereEqualTo("country_id", countryId)
                 .orderBy("price")
                 .limit(pageLimit.toLong())
                 .get()

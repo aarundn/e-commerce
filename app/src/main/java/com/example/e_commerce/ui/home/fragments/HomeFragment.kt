@@ -31,11 +31,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override val viewModel: HomeViewModel by viewModels()
     override fun getLayoutRes(): Int = R.layout.fragment_home
-
 
 
     override fun init() {
@@ -43,43 +42,66 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
         initViewModel()
 
     }
+
     private fun initViews() {
         initCategories()
         initRecycler()
     }
 
     private fun initRecycler() {
-
-        lifecycleScope.launch {
-            viewModel.flashSaleState.collect{
-                Log.d("HomeFragment", "initViewModel: $it")
-                val flashSaleAdapter = ProductAdapter()
-                flashSaleAdapter.submitList(it)
-                binding.flashSaleProductsRv.apply {
-                    adapter = flashSaleAdapter
-                    layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+        lifecycleScope.launch{
+            viewModel.megaSaleState.collect { productList ->
+                val megaSaleAdapter = ProductAdapter()
+                megaSaleAdapter.submitList(productList)
+                binding.invalidateAll()
+                binding.megaSaleProductsRv.apply {
+                    adapter = megaSaleAdapter
+                    layoutManager =
+                        LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
                     setHasFixedSize(true)
 
                 }
             }
         }
 
+        lifecycleScope.launch {
+            viewModel.flashSaleState.collect { productList ->
+                val flashSaleAdapter = ProductAdapter()
+                flashSaleAdapter.submitList(productList)
+                binding.invalidateAll()
+                setFlashSaleRecyclerView(flashSaleAdapter)
+            }
+        }
+
     }
+
+    private fun setFlashSaleRecyclerView(flashSaleAdapter: ProductAdapter) {
+        binding.flashSaleProductsRv.apply {
+            adapter = flashSaleAdapter
+            layoutManager =
+                LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            setHasFixedSize(true)
+
+        }
+    }
+
     private fun initViewModel() {
         lifecycleScope.launch {
-           // viewModel.getSaleProduct()
+            // viewModel.getSaleProduct()
         }
         lifecycleScope.launch {
-            viewModel.salesAdsStateTamp.collect{ source ->
-                when(source){
+            viewModel.salesAdsStateTamp.collect { source ->
+                when (source) {
                     is Resource.Success -> {
                         initSalesAdsView(source.data)
                         binding.saleAdsShimmerView.root.stopShimmer()
                         binding.saleAdsShimmerView.root.visibility = View.GONE
                     }
+
                     is Resource.Error -> {
                         Log.d("HomeFragment", "initViewModel: ${source.exception?.message}")
                     }
+
                     is Resource.Loading -> {
 
                         Log.d("HomeFragment", "initViewModel: Loading")
@@ -93,22 +115,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
     }
 
 
-
-
-
-
     private fun initCategories() {
         lifecycleScope.launch {
             viewModel.categoryState.collect { source ->
-                when(source){
+                when (source) {
                     is Resource.Success -> {
                         initCategoryRecycler(source)
-                        Log.d("HomeFragment", "initCategories: success")
 
                     }
+
                     is Resource.Error -> {
                         Log.d("HomeFragment", "initCategories: ${source.exception?.message}")
                     }
+
                     is Resource.Loading -> {
                         Log.d("HomeFragment", "initCategories: Loading")
                     }
@@ -136,7 +155,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel> (){
 
         setupDots(salesAds!!.size)
         updateDots(0)
-        val adapter = SalesAdAdapter(lifecycleScope,salesAds)
+        val adapter = SalesAdAdapter(lifecycleScope, salesAds)
         binding.saleAdsViewPager.adapter = adapter
         binding.saleAdsViewPager.setPageTransformer(DepthPageTransformer())
 
