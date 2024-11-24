@@ -28,7 +28,7 @@ fun ProductModel.toProductUIModel(): ProductUIModel {
         images = images,
         price = price,
         quantity = quantity,
-        rate = rate,
+        rate = rate ?: 0f,
         offerPercentage = offerPercentage,
         saleType = saleType,
         colors = colors,

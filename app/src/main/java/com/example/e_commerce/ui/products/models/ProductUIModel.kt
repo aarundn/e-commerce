@@ -8,7 +8,7 @@ data class ProductUIModel(
     var images: List<String>?,
     var price: Int?,
     var quantity: Int?,
-    var rate: Double? = null,
+    var rate: Float? = null,
     var offerPercentage: Int? = null,
     var saleType: String? = null,
     var colors: List<String>? = null,
