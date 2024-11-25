@@ -3,6 +3,7 @@ package com.example.e_commerce.ui.home.fragments
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,10 +14,12 @@ import com.example.e_commerce.R
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentHomeBinding
 import com.example.e_commerce.ui.common.fragments.BaseFragment
+import com.example.e_commerce.ui.common.views.loadImage
 import com.example.e_commerce.ui.home.adapter.CategoriesAdapter
 import com.example.e_commerce.ui.home.adapter.SalesAdAdapter
 import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
+import com.example.e_commerce.ui.home.model.SpecialSectionUiModel
 import com.example.e_commerce.ui.home.viewmodel.HomeViewModel
 import com.example.e_commerce.ui.products.adapter.ProductAdapter
 import com.example.e_commerce.utils.DepthPageTransformer
@@ -26,6 +29,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -49,7 +53,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initRecycler() {
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             viewModel.megaSaleState.collect { productList ->
                 val megaSaleAdapter = ProductAdapter()
                 megaSaleAdapter.submitList(productList)
@@ -65,11 +69,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         lifecycleScope.launch {
+            binding.productFlashShimmerLayout.visibility = View.VISIBLE
+
             viewModel.flashSaleState.collect { productList ->
-                val flashSaleAdapter = ProductAdapter()
-                flashSaleAdapter.submitList(productList)
-                binding.invalidateAll()
-                setFlashSaleRecyclerView(flashSaleAdapter)
+
+                if (productList.isNotEmpty()) {
+                    val flashSaleAdapter = ProductAdapter()
+                    flashSaleAdapter.submitList(productList)
+                    binding.productFlashShimmerLayout.visibility = View.GONE
+                    binding.invalidateAll()
+                    setFlashSaleRecyclerView(flashSaleAdapter)
+                }
             }
         }
 
@@ -108,10 +118,33 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
             }
-
-
         }
 
+        lifecycleScope.launch {
+            viewModel.recommendedDataState.collectLatest { recommendedSectionData ->
+                Log.d("Recommended home", "Recommended section data: $recommendedSectionData")
+                recommendedSectionData?.let {
+                    setupRecommendedViewData(it)
+                } ?: run {
+                    Log.d("Recommended home", "Recommended section data is null")
+//                    binding.recommendedProductLayout.visibility = View.GONE
+                }
+            }
+        }
+
+    }
+
+    private fun setupRecommendedViewData(sectionData: SpecialSectionUiModel) {
+        loadImage(binding.recommendedProductIv, sectionData.image)
+        binding.recommendedProductTitleIv.text = sectionData.title
+        binding.recommendedProductDescriptionIv.text = sectionData.description
+        binding.recommendedProductLayout.setOnClickListener {
+            Toast.makeText(
+                requireContext(),
+                "Recommended Product Clicked, goto ${sectionData.type}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
 
@@ -121,15 +154,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 when (source) {
                     is Resource.Success -> {
                         initCategoryRecycler(source)
-
+                        binding.categoryShimmerLayout.visibility = View.GONE
                     }
 
                     is Resource.Error -> {
                         Log.d("HomeFragment", "initCategories: ${source.exception?.message}")
+                        binding.categoryShimmerLayout.visibility = View.GONE
                     }
 
                     is Resource.Loading -> {
                         Log.d("HomeFragment", "initCategories: Loading")
+                        binding.categoryShimmerLayout.visibility = View.VISIBLE
                     }
                 }
             }

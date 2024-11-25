@@ -148,7 +148,9 @@
                         android:text="@string/more_categories"
                         android:textSize="16sp" />
                 </LinearLayout>
-
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/categories_recycler_view"
                     android:layout_width="match_parent"
@@ -156,6 +158,23 @@
                     android:nestedScrollingEnabled="false"
                     android:paddingStart="8dp"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                    <LinearLayout
+                        android:id="@+id/category_shimmer_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingStart="16dp">
+
+                        <!-- Repeat shimmer items for RecyclerView loading -->
+                        <include layout="@layout/category_shimmer_view"/>
+                        <include layout="@layout/category_shimmer_view"/>
+                        <include layout="@layout/category_shimmer_view"/>
+                        <include layout="@layout/category_shimmer_view"/>
+
+                    </LinearLayout>
+
+
+                </RelativeLayout>
                 <LinearLayout
                     android:id="@+id/flash_sale_layout"
                     android:layout_width="match_parent"
@@ -182,7 +201,9 @@
                         android:text="@string/see_more"
                         android:textSize="16sp" />
                 </LinearLayout>
-
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/flash_sale_products_rv"
                     android:layout_width="match_parent"
@@ -192,6 +213,19 @@
                     android:paddingStart="8dp"
                     android:tag="flash_sale_rv"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                    <LinearLayout
+                        android:id="@+id/product_flash_shimmer_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:paddingStart="16dp">
+
+                        <!-- Repeat shimmer items for RecyclerView loading -->
+                        <include layout="@layout/product_shimmer_view"/>
+                        <include layout="@layout/product_shimmer_view"/>
+                        <include layout="@layout/product_shimmer_view"/>
+                    </LinearLayout>
+                </RelativeLayout>
                 <LinearLayout
                     android:id="@+id/mega_sale_layout"
                     android:layout_width="match_parent"
@@ -228,7 +262,55 @@
                     android:paddingStart="8dp"
                     android:tag="flash_sale_rv"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                <RelativeLayout
+                    android:id="@+id/recommended_product_layout"
+                    android:visibilities="@{viewModel.isRecommendedSection}"
+                    android:layout_width="match_parent"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:layout_height="250dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:elevation="2dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/recommended_product_title_iv"
+                            android:layout_width="300dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:layout_marginStart="20dp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textColor="@android:color/white"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            tools:text="Recommended Product" />
+
+                        <TextView
+                            android:id="@+id/recommended_product_description_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="We recommend the best for you" />
+                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/recommended_product_iv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        tools:src="@drawable/promo_image" />
+
+
+                </RelativeLayout>
             </LinearLayout>
+
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

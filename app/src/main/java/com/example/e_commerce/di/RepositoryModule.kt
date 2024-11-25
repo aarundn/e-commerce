@@ -12,6 +12,8 @@ import com.example.e_commerce.data.repository.home.SalesAdsRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepositoryImpl
 import com.example.e_commerce.data.repository.products.ProductRepository
 import com.example.e_commerce.data.repository.products.ProductRepositoryImpl
+import com.example.e_commerce.data.repository.special_sections.SpecialSectionsRepository
+import com.example.e_commerce.data.repository.special_sections.SpecialSectionsRepositoryImpl
 import com.example.e_commerce.data.repository.user.UserFirestoreRepository
 import com.example.e_commerce.data.repository.user.UserFirestoreRepositoryImpl
 import com.example.e_commerce.data.repository.user.UserPreferenceRepository
@@ -75,6 +77,11 @@ abstract class RepositoryModule {
         countryRepositoryImpl: CountriesRepositoryImpl
     ): CountriesRepository
 
+    @Binds
+    @Singleton
+    abstract fun specialSectionRepository(
+        specialSectionsRepositoryImpl: SpecialSectionsRepositoryImpl
+    ): SpecialSectionsRepository
 
 }
 

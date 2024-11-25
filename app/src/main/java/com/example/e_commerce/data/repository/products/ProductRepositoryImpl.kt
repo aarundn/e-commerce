@@ -3,6 +3,7 @@ package com.example.e_commerce.data.repository.products
 import android.util.Log
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
+import com.example.e_commerce.domain.models.toProductUIModel
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow

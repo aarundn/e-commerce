@@ -12,8 +12,10 @@ import com.example.e_commerce.data.models.user.CountryData
 import com.example.e_commerce.data.repository.category.CategoryRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepository
 import com.example.e_commerce.data.repository.products.ProductRepository
+import com.example.e_commerce.data.repository.special_sections.SpecialSectionsRepository
 import com.example.e_commerce.data.repository.user.UserPreferenceRepository
 import com.example.e_commerce.domain.models.toProductUIModel
+import com.example.e_commerce.domain.models.toSpecialSectionUiModel
 import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import com.example.e_commerce.ui.products.models.ProductUIModel
@@ -38,15 +40,12 @@ class HomeViewModel @Inject constructor(
     private val salesAdsRepository: SalesAdsRepository,
     private val categoryRepository: CategoryRepository,
     private val productRepository: ProductRepository,
-    private val userPreferenceRepository: UserPreferenceRepository
+    private val userPreferenceRepository: UserPreferenceRepository,
+    private val specialSectionsRepository: SpecialSectionsRepository
 ) : ViewModel() {
 
 
 
-
-    private val _saleProductState =
-        MutableStateFlow<Resource<List<ProductModel>>>(Resource.Loading())
-    val saleProductState = _saleProductState.asStateFlow()
     val salesAdsStateTamp: StateFlow<Resource<List<SalesUiAdModel>>> =
         salesAdsRepository.getSalesAds().stateIn(
             viewModelScope + IO,
@@ -71,6 +70,15 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.Eagerly,
         initialValue = CountryData.getDefaultInstance()
     )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val recommendedDataState = specialSectionsRepository.getRecommendedProducts().stateIn(
+        viewModelScope + IO,
+        SharingStarted.Eagerly,
+        null
+    ).mapLatest { it?.toSpecialSectionUiModel() }
+
+    val isRecommendedSection = recommendedDataState.map { it == null }.asLiveData()
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getProductsSale(productSaleType: ProductSaleType): StateFlow<List<ProductUIModel>>  =
