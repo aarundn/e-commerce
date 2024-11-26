@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
 import com.example.e_commerce.domain.models.toProductUIModel
-import com.example.e_commerce.ui.products.models.ProductUIModel
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
@@ -33,12 +32,11 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSaleProducts(
+    override fun getSaleProducts(
         countryId: String,saleType:String, pageLimit: Int
-    ):Flow<Resource<List<ProductUIModel>>>
-            = flow {
-        emit(Resource.Loading())
-        try {
+    ):Flow<List<ProductModel>>
+    {
+        return flow {
 
             val products = firestore.collection("products")
                 .whereEqualTo("sale_type", saleType)
@@ -49,11 +47,9 @@ class ProductRepositoryImpl @Inject constructor(
                 .await()
                 .toObjects(ProductModel::class.java)
 
-            emit(Resource.Success(products.map { it.toProductUIModel() }))
+            emit(products)
             Log.d("ProductRepositoryImpl", "getSaleProducts: $products")
 
-        }  catch (e: Exception) {
-            emit(Resource.Error(Exception(e.message)))
         }
     }
 

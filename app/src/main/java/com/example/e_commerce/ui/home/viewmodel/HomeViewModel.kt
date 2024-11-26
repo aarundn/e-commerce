@@ -1,18 +1,14 @@
 package com.example.e_commerce.ui.home.viewmodel
 
 import android.util.Log
-import android.view.View
-import androidx.databinding.BindingAdapter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.bumptech.glide.load.engine.cache.MemoryCache.ResourceRemovedListener
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
 import com.example.e_commerce.data.models.products.ProductSaleType
 import com.example.e_commerce.data.models.sales_ad.SalesAdModel
 import com.example.e_commerce.data.models.user.CountryData
-import com.example.e_commerce.data.models.user.UserDetailsModel
 import com.example.e_commerce.data.repository.category.CategoryRepository
 import com.example.e_commerce.data.repository.home.SalesAdsRepository
 import com.example.e_commerce.data.repository.products.ProductRepository
@@ -26,12 +22,9 @@ import com.example.e_commerce.ui.products.models.ProductUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -51,15 +44,6 @@ class HomeViewModel @Inject constructor(
     private val specialSectionsRepository: SpecialSectionsRepository
 ) : ViewModel() {
 
-
-
-//    val isEmptyFlashSale = MutableStateFlow(true)
-//    val isEmptyMegaSale = MutableStateFlow(true)
-
-    private val _flashSaleState = MutableStateFlow<Resource<List<ProductUIModel>>>(Resource.Loading())
-    val flashSaleState: StateFlow<Resource<List<ProductUIModel>>> = _flashSaleState.asStateFlow()
-    private val _megaSaleState = MutableStateFlow<Resource<List<ProductUIModel>>>(Resource.Loading())
-    val megaSaleState: StateFlow<Resource<List<ProductUIModel>>> = _megaSaleState.asStateFlow()
 
 
     val salesAdsStateTamp: StateFlow<Resource<List<SalesUiAdModel>>> =
@@ -97,53 +81,25 @@ class HomeViewModel @Inject constructor(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getSalesProduct(
-        productSaleType: ProductSaleType,
-        state: MutableStateFlow<Resource<List<ProductUIModel>>>
-    ) {
-        viewModelScope.launch(IO) {
-            countryState.collectLatest { country ->
-                try {
-                    state.value = Resource.Loading()
-                    val products = productRepository.getSaleProducts(
-                        country.id ?: "0",
-                        productSaleType.type,
-                        10
-                    ).first()
-                    state.value = Resource.Success(products.data)
-                } catch (e: Exception) {
-                    state.value = Resource.Error(e)
-                }
-            }
-        }
-    }
+    fun getProductsSale(productSaleType: ProductSaleType): StateFlow<List<ProductUIModel>>  =
+        countryState.mapLatest { country ->
+            productRepository.getSaleProducts(
+                country.id ?: "0",
+                productSaleType.type,
+                10
+            )
+        }.mapLatest {
+            it.first().map { getProductModel(it) }
+        }.stateIn(
+            viewModelScope + IO,
+            SharingStarted.Eagerly,
+            emptyList()
+        )
+    val flashSaleState = getProductsSale(ProductSaleType.FLASH_SALE)
+    val megaSaleState = getProductsSale(ProductSaleType.MEGA_SALE)
 
-
-//        countryState.mapLatest { country ->
-//            productRepository.getSaleProducts(
-//                country.id ?: "0",
-//                productSaleType.type,
-//                10
-//            )
-//        }.mapLatest {
-//             it.first().map { getProductModel(it) }
-
-
-    val isEmptyFlashSale = flashSaleState.map { resource ->
-        when (resource) {
-            is Resource.Success -> resource.data?.isEmpty()
-            is Resource.Loading -> false // Assume not empty during loading
-            is Resource.Error -> true // Consider empty on error
-        }
-    }.asLiveData()
-
-    val isEmptyMegaSale = megaSaleState.map { resource ->
-        when (resource) {
-            is Resource.Success -> resource.data?.isEmpty()
-            is Resource.Loading -> false
-            is Resource.Error -> true
-        }
-    }.asLiveData()
+    val isEmptyFlashSale = flashSaleState.map { it.isEmpty() }.asLiveData()
+    val isEmptyMegaSale = megaSaleState.map { it.isEmpty() }.asLiveData()
     private fun getProductModel(productModel: ProductModel): ProductUIModel{
         val productUiModel = productModel.toProductUIModel().copy(
             currencySymbol = countryState.value.currencySymbol,
@@ -153,8 +109,6 @@ class HomeViewModel @Inject constructor(
     }
 
     init {
-        getSalesProduct(ProductSaleType.FLASH_SALE, _flashSaleState)
-        getSalesProduct(ProductSaleType.MEGA_SALE, _megaSaleState)
         viewModelScope.launch {
             categoryRepository.getCategories().collect { source ->
                 _categoryState.value = source
@@ -162,9 +116,4 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-}
-@BindingAdapter("visibilities")
-fun setVisibility(view: View, isEmpty: Boolean) {
-    Log.d("VISIBILITIES","$isEmpty")
-    view.visibility = if (isEmpty) View.GONE else View.VISIBLE
 }
