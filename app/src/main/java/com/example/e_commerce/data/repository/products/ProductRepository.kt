@@ -2,6 +2,7 @@ package com.example.e_commerce.data.repository.products
 
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
+import com.example.e_commerce.ui.products.models.ProductUIModel
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
@@ -11,9 +12,9 @@ interface ProductRepository {
         pageLimit: Int
     ): Flow<Resource<List<ProductModel>>>
 
-    fun getSaleProducts(
+    suspend fun getSaleProducts(
         countryId: String,
         saleType: String,
         pageLimit: Int
-    ): Flow<List<ProductModel>>
+    ): Flow<Resource<List<ProductUIModel>>>
 }
