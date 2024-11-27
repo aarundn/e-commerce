@@ -9,8 +9,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.e_commerce.databinding.ProductItemBinding
 import com.example.e_commerce.ui.products.models.ProductUIModel
-
+enum class ProductViewType{
+    GRID,
+    LIST
+}
 class ProductAdapter(
+    private val viewType: ProductViewType = ProductViewType.GRID,
+    private val onProductClick: (ProductUIModel) -> Unit = {}
 ) : ListAdapter<ProductUIModel, ProductAdapter.ProductViewHolder>(ProductDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -25,13 +30,19 @@ class ProductAdapter(
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = getItem(position)
         Log.d("ProductAdapter", "onBindViewHolder: $product")
-        holder.bind(product)
+        holder.bind(viewType,product)
     }
 
     inner class ProductViewHolder(
         private val binding: ProductItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(product: ProductUIModel) {
+        fun bind(viewType: ProductViewType,product: ProductUIModel) {
+            if (viewType == ProductViewType.GRID){
+                binding.productItem.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            }
             binding.product = product
 //            binding.root.setOnClickListener { onProductClicked(product) }
             binding.executePendingBindings()

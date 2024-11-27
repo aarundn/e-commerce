@@ -16,7 +16,8 @@ fun ProductUIModel.toProductModel(): ProductModel {
         rate = rate,
         offerPercentage = offerPercentage,
         saleType = saleType,
-        colors = colors
+        colors = colors,
+        sizes = sizes
     )
 }
 fun ProductModel.toProductUIModel(): ProductUIModel {
@@ -32,5 +33,6 @@ fun ProductModel.toProductUIModel(): ProductUIModel {
         offerPercentage = offerPercentage,
         saleType = saleType,
         colors = colors,
+        sizes = sizes
     )
 }

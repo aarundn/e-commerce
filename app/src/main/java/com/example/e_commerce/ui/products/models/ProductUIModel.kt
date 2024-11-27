@@ -1,5 +1,11 @@
 package com.example.e_commerce.ui.products.models
 
+import android.os.Parcelable
+import androidx.annotation.Keep
+import com.example.e_commerce.data.models.products.ProductColorModel
+import com.example.e_commerce.data.models.products.ProductSizeModel
+import kotlinx.parcelize.Parcelize
+
 data class ProductUIModel(
     var id: String? = null,
     var name: String? = null,
@@ -11,8 +17,9 @@ data class ProductUIModel(
     var rate: Float? = null,
     var offerPercentage: Int? = null,
     var saleType: String? = null,
-    var colors: List<String>? = null,
-    var currencySymbol : String? = ""
+    val colors: List<ProductColorModel>?,
+    val sizes: List<ProductSizeModel>?,
+    var currencySymbol: String? = ""
 ){
     fun getFormattedPrice(): String {
         return "$price $currencySymbol"
@@ -30,3 +37,15 @@ data class ProductUIModel(
         return images?.firstOrNull() ?: ""
     }
 }
+@Keep
+@Parcelize
+data class ProductColorUIModel(
+    var size: Long? = null, var stock: Int? = null, var color: String? = null
+) : Parcelable
+
+
+@Keep
+@Parcelize
+data class ProductSizeUIModel(
+    var size: Long? = null, var stock: Int? = null
+) : Parcelable

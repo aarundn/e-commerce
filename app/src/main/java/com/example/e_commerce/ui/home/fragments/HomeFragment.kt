@@ -23,6 +23,7 @@ import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import com.example.e_commerce.ui.home.model.SpecialSectionUiModel
 import com.example.e_commerce.ui.home.viewmodel.HomeViewModel
 import com.example.e_commerce.ui.products.adapter.ProductAdapter
+import com.example.e_commerce.ui.products.adapter.ProductViewType
 import com.example.e_commerce.utils.DepthPageTransformer
 import com.example.e_commerce.utils.GridSpacingItemDecoration
 import com.example.e_commerce.utils.HorizontalSpaceItemDecoration
@@ -57,17 +58,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initRecycler() {
         lifecycleScope.launch {
+            binding.productMegaShimmerLayout.visibility = View.VISIBLE
             viewModel.megaSaleState.collect { productList ->
-                val megaSaleAdapter = ProductAdapter()
-                megaSaleAdapter.submitList(productList)
-                binding.invalidateAll()
-                binding.megaSaleProductsRv.apply {
-                    adapter = megaSaleAdapter
-                    layoutManager =
-                        LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-                    setHasFixedSize(true)
-
+                if (productList.isNotEmpty()){
+                    binding.productMegaShimmerLayout.visibility = View.GONE
+                    val megaSaleAdapter = ProductAdapter(viewType = ProductViewType.LIST)
+                    megaSaleAdapter.submitList(productList)
+                    binding.invalidateAll()
+                    setMegaSaleRecycler(megaSaleAdapter)
                 }
+
             }
         }
 
@@ -77,7 +77,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.flashSaleState.collect { productList ->
 
                 if (productList.isNotEmpty()) {
-                    val flashSaleAdapter = ProductAdapter()
+                    val flashSaleAdapter = ProductAdapter(viewType = ProductViewType.LIST)
                     flashSaleAdapter.submitList(productList)
                     binding.productFlashShimmerLayout.visibility = View.GONE
                     binding.invalidateAll()
@@ -96,6 +96,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     }
 
+    private fun setMegaSaleRecycler(megaSaleAdapter: ProductAdapter) {
+        binding.megaSaleProductsRv.apply {
+            adapter = megaSaleAdapter
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            addItemDecoration(HorizontalSpaceItemDecoration(18))
+            setHasFixedSize(true)
+        }
+    }
+
     private fun setAllProductRecycler(productsAdapter: ProductAdapter) {
         binding.allProductsRv.apply {
             adapter = productsAdapter
@@ -104,7 +113,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
             clipToPadding = false
             clipChildren = false
-
+            addItemDecoration(GridSpacingItemDecoration(2,18, true))
         }
     }
 
@@ -112,7 +121,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.flashSaleProductsRv.apply {
             adapter = flashSaleAdapter
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-            addItemDecoration(HorizontalSpaceItemDecoration(16))
+            addItemDecoration(HorizontalSpaceItemDecoration(18))
             setHasFixedSize(true)
 
 
