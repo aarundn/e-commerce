@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -23,6 +24,8 @@ import com.example.e_commerce.ui.home.model.SpecialSectionUiModel
 import com.example.e_commerce.ui.home.viewmodel.HomeViewModel
 import com.example.e_commerce.ui.products.adapter.ProductAdapter
 import com.example.e_commerce.utils.DepthPageTransformer
+import com.example.e_commerce.utils.GridSpacingItemDecoration
+import com.example.e_commerce.utils.HorizontalSpaceItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -82,15 +85,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
         }
+        viewModel.getNextProducts()
+        lifecycleScope.launch {
+            viewModel.allProductsState.collect{ source ->
+                val productsAdapter = ProductAdapter()
+                productsAdapter.submitList(source)
+                setAllProductRecycler(productsAdapter)
+            }
+        }
 
+    }
+
+    private fun setAllProductRecycler(productsAdapter: ProductAdapter) {
+        binding.allProductsRv.apply {
+            adapter = productsAdapter
+            layoutManager = GridLayoutManager(
+                requireContext(), 2
+            )
+            clipToPadding = false
+            clipChildren = false
+
+        }
     }
 
     private fun setFlashSaleRecyclerView(flashSaleAdapter: ProductAdapter) {
         binding.flashSaleProductsRv.apply {
             adapter = flashSaleAdapter
-            layoutManager =
-                LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+            addItemDecoration(HorizontalSpaceItemDecoration(16))
             setHasFixedSize(true)
+
 
         }
     }
@@ -257,9 +281,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        autoScrollJob?.cancel()
-        _binding = null
+    override fun onResume() {
+        super.onResume()
+        viewModel.startTimer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopTimer()
     }
 }

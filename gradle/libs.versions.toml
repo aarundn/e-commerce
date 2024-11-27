@@ -4,6 +4,7 @@ chargilysdk1 = "1.0-beta"
 compiler = "4.14.2"
 coreSplashscreen = "1.0.1"
 facebookAndroidSdk = "17.0.1"
+foundation = "1.7.5"
 glide = "4.16.0"
 hiltAndroid = "2.51.1"
 hiltCompiler = "2.51.1"
@@ -30,6 +31,7 @@ firebaseStorage = "21.0.1"
 firebaseDatabase = "21.0.0"
 firebasePerf = "21.0.2"
 googleFirebaseFirebasePerf = "1.4.2"
+material3 = "1.3.1"
 navigationFragment = "2.8.3"
 ossLicensesPlugin = "0.10.6"
 playServicesAuth = "21.2.0"
@@ -39,16 +41,22 @@ protobufKotlinLiteVersion = "4.26.0"
 reactivenetworkRx2 = "3.0.8"
 datastoreCoreAndroid = "1.1.1"
 shimmer = "0.5.0"
+ui = "1.7.5"
 [libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastoreCoreAndroid" }
+androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-navigation-dynamic-features-fragment = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navigationFragment" }
 androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigationFragment" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationFragment" }
+androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 facebook-android-sdk = { module = "com.facebook.android:facebook-android-sdk", version.ref = "facebookAndroidSdk" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }

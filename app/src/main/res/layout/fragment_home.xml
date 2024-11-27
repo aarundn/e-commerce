@@ -232,7 +232,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:paddingStart="16dp"
-                    android:visibilities="@{viewModel.isEmptyMegaSale()}"
+                    android:visibilities="@{viewModel.isEmptyMegaSale}"
                     android:paddingTop="8dp"
                     android:paddingEnd="16dp"
                     android:paddingBottom="8dp"
@@ -258,7 +258,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                    android:visibilities="@{viewModel.isEmptyMegaSale()}"
+                    android:visibilities="@{viewModel.isEmptyMegaSale}"
                     android:paddingStart="8dp"
                     android:tag="flash_sale_rv"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -309,8 +309,16 @@
 
 
                 </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/all_products_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingStart="8dp"
+                    android:tag="flash_sale_rv"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
             </LinearLayout>
-
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -50,6 +50,10 @@ android {
         viewBinding true
         dataBinding true
         buildConfig = true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.2'
     }
 }
 
@@ -101,6 +105,13 @@ dependencies {
 
     //shimmer effect
     implementation libs.shimmer
+
+    //compose
+    implementation libs.androidx.ui
+    implementation libs.androidx.material3
+    implementation libs.androidx.foundation
+    implementation libs.androidx.lifecycle.runtime.compose
+    implementation libs.androidx.activity.compose
 }
 
 // Define tasks for Java and Kotlin generation with 'lite' option

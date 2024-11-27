@@ -19,6 +19,7 @@ import com.example.e_commerce.domain.models.toSpecialSectionUiModel
 import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import com.example.e_commerce.ui.products.models.ProductUIModel
+import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,7 +46,6 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-
     val salesAdsStateTamp: StateFlow<Resource<List<SalesUiAdModel>>> =
         salesAdsRepository.getSalesAds().stateIn(
             viewModelScope + IO,
@@ -70,6 +70,7 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.Eagerly,
         initialValue = CountryData.getDefaultInstance()
     )
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val recommendedDataState = specialSectionsRepository.getRecommendedProducts().stateIn(
         viewModelScope + IO,
@@ -77,11 +78,12 @@ class HomeViewModel @Inject constructor(
         null
     ).mapLatest { it?.toSpecialSectionUiModel() }
 
-    val isRecommendedSection = recommendedDataState.map { it == null }.asLiveData()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val isRecommendedSection = recommendedDataState.mapLatest { it == null }.asLiveData()
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getProductsSale(productSaleType: ProductSaleType): StateFlow<List<ProductUIModel>>  =
+    fun getProductsSale(productSaleType: ProductSaleType): StateFlow<List<ProductUIModel>> =
         countryState.mapLatest { country ->
             productRepository.getSaleProducts(
                 country.id ?: "0",
@@ -95,17 +97,58 @@ class HomeViewModel @Inject constructor(
             SharingStarted.Eagerly,
             emptyList()
         )
+
     val flashSaleState = getProductsSale(ProductSaleType.FLASH_SALE)
     val megaSaleState = getProductsSale(ProductSaleType.MEGA_SALE)
 
+
     val isEmptyFlashSale = flashSaleState.map { it.isEmpty() }.asLiveData()
     val isEmptyMegaSale = megaSaleState.map { it.isEmpty() }.asLiveData()
-    private fun getProductModel(productModel: ProductModel): ProductUIModel{
+    private fun getProductModel(productModel: ProductModel): ProductUIModel {
         val productUiModel = productModel.toProductUIModel().copy(
             currencySymbol = countryState.value.currencySymbol,
         )
 
         return productUiModel
+    }
+
+    private val _allProductsState: MutableStateFlow<List<ProductUIModel>> = MutableStateFlow(emptyList())
+    val allProductsState = _allProductsState.asStateFlow()
+    val isLoadingAllProducts = MutableStateFlow(false)
+    val isFinishedLoadingAllProducts = MutableStateFlow(false)
+    var lastDocument: DocumentSnapshot? = null
+
+    fun getNextProducts() = viewModelScope.launch(IO) {
+        if (isLoadingAllProducts.value) return@launch
+        if (isFinishedLoadingAllProducts.value) return@launch
+        isLoadingAllProducts.emit(true)
+        val countryId = countryState.first().id ?: "0"
+        productRepository.getAllProductPaging(
+            countryId,
+            4,
+            lastDocument
+        ).collectLatest { resource ->
+            when(resource){
+                is Resource.Loading -> isLoadingAllProducts.emit(true)
+                is Resource.Success -> {
+                    isLoadingAllProducts.emit(false)
+                    resource.data?.let { document ->
+                        if (document.isEmpty){
+                            isFinishedLoadingAllProducts.emit(true)
+                            return@collectLatest
+                        } else{
+                            lastDocument = document.documents.lastOrNull()
+                            _allProductsState.value = document.toObjects(ProductModel::class.java)
+                                .map { getProductModel(it) }
+                        }
+                    }
+                }
+                is Resource.Error ->{
+                    isLoadingAllProducts.emit(false)
+                    Log.d(TAG,"data is : ${resource.exception?.message}")
+                }
+            }
+        }
     }
 
     init {
@@ -114,6 +157,9 @@ class HomeViewModel @Inject constructor(
                 _categoryState.value = source
             }
         }
+    }
+    companion object {
+        private const val TAG = "HomeViewModel"
     }
 
 }

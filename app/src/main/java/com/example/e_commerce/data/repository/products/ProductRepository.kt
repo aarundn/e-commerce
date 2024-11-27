@@ -2,6 +2,8 @@ package com.example.e_commerce.data.repository.products
 
 import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.data.models.products.ProductModel
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
@@ -16,4 +18,9 @@ interface ProductRepository {
         saleType: String,
         pageLimit: Int
     ): Flow<List<ProductModel>>
+    fun getAllProductPaging(
+        countryId: String,
+        pageLimit: Int,
+        lastDocument: DocumentSnapshot? = null
+    ): Flow<Resource<QuerySnapshot>>
 }
