@@ -23,4 +23,6 @@ interface ProductRepository {
         pageLimit: Int,
         lastDocument: DocumentSnapshot? = null
     ): Flow<Resource<QuerySnapshot>>
+
+    fun listenToProductDetails(productId: String): Flow<ProductModel>
 }

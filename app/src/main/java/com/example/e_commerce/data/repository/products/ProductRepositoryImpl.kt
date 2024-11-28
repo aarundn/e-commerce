@@ -8,7 +8,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -73,6 +75,26 @@ class ProductRepositoryImpl @Inject constructor(
             emit(Resource.Error(Exception(e.message)))
         }
 
+    }
+
+    override fun listenToProductDetails(productId: String): Flow<ProductModel> {
+        return callbackFlow {
+            val listener = firestore.collection("products")
+                .document(productId)
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+                    val product = value?.toObject(ProductModel::class.java)
+                    if (product != null) {
+                        trySend(product)
+                    }
+                }
+            awaitClose {
+                listener.remove()
+            }
+        }
     }
 
     companion object {

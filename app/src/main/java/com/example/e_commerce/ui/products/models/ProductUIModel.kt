@@ -5,7 +5,8 @@ import androidx.annotation.Keep
 import com.example.e_commerce.data.models.products.ProductColorModel
 import com.example.e_commerce.data.models.products.ProductSizeModel
 import kotlinx.parcelize.Parcelize
-
+@Keep
+@Parcelize
 data class ProductUIModel(
     var id: String? = null,
     var name: String? = null,
@@ -20,7 +21,7 @@ data class ProductUIModel(
     val colors: List<ProductColorModel>?,
     val sizes: List<ProductSizeModel>?,
     var currencySymbol: String? = ""
-){
+): Parcelable {
     fun getFormattedPrice(): String {
         return "$price $currencySymbol"
     }

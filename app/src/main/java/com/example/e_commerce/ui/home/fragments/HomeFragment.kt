@@ -1,5 +1,6 @@
 package com.example.e_commerce.ui.home.fragments
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
@@ -22,8 +23,10 @@ import com.example.e_commerce.ui.home.model.CategoryUIModel
 import com.example.e_commerce.ui.home.model.SalesUiAdModel
 import com.example.e_commerce.ui.home.model.SpecialSectionUiModel
 import com.example.e_commerce.ui.home.viewmodel.HomeViewModel
+import com.example.e_commerce.ui.products.ProductDetailsActivity
 import com.example.e_commerce.ui.products.adapter.ProductAdapter
 import com.example.e_commerce.ui.products.adapter.ProductViewType
+import com.example.e_commerce.ui.products.models.ProductUIModel
 import com.example.e_commerce.utils.DepthPageTransformer
 import com.example.e_commerce.utils.GridSpacingItemDecoration
 import com.example.e_commerce.utils.HorizontalSpaceItemDecoration
@@ -62,7 +65,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.megaSaleState.collect { productList ->
                 if (productList.isNotEmpty()){
                     binding.productMegaShimmerLayout.visibility = View.GONE
-                    val megaSaleAdapter = ProductAdapter(viewType = ProductViewType.LIST)
+                    val megaSaleAdapter = ProductAdapter(viewType = ProductViewType.LIST){
+                        goToProductDetails(it)
+                    }
                     megaSaleAdapter.submitList(productList)
                     binding.invalidateAll()
                     setMegaSaleRecycler(megaSaleAdapter)
@@ -77,7 +82,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.flashSaleState.collect { productList ->
 
                 if (productList.isNotEmpty()) {
-                    val flashSaleAdapter = ProductAdapter(viewType = ProductViewType.LIST)
+                    val flashSaleAdapter = ProductAdapter(viewType = ProductViewType.LIST){
+                        goToProductDetails(it)
+                    }
                     flashSaleAdapter.submitList(productList)
                     binding.productFlashShimmerLayout.visibility = View.GONE
                     binding.invalidateAll()
@@ -88,7 +95,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewModel.getNextProducts()
         lifecycleScope.launch {
             viewModel.allProductsState.collect{ source ->
-                val productsAdapter = ProductAdapter()
+                val productsAdapter = ProductAdapter(){
+                    goToProductDetails(it)
+                }
                 productsAdapter.submitList(source)
                 setAllProductRecycler(productsAdapter)
             }
@@ -284,6 +293,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
         }
+    }
+
+    fun goToProductDetails(product: ProductUIModel) {
+        requireActivity().startActivity(
+            Intent(requireContext(), ProductDetailsActivity::class.java).apply {
+                putExtra("product", product)
+            }
+        )
     }
 
     companion object {

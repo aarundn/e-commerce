@@ -44,7 +44,7 @@ class ProductAdapter(
                 )
             }
             binding.product = product
-//            binding.root.setOnClickListener { onProductClicked(product) }
+            binding.root.setOnClickListener { onProductClick(product) }
             binding.executePendingBindings()
         }
     }
