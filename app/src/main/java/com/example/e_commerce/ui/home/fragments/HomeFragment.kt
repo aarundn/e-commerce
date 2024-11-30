@@ -17,6 +17,8 @@ import com.example.e_commerce.data.models.Resource
 import com.example.e_commerce.databinding.FragmentHomeBinding
 import com.example.e_commerce.ui.common.fragments.BaseFragment
 import com.example.e_commerce.ui.common.views.loadImage
+import com.example.e_commerce.ui.common.views.setIndicator
+import com.example.e_commerce.ui.common.views.updateIndicator
 import com.example.e_commerce.ui.home.adapter.CategoriesAdapter
 import com.example.e_commerce.ui.home.adapter.SalesAdAdapter
 import com.example.e_commerce.ui.home.model.CategoryUIModel
@@ -230,8 +232,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initSalesAdsView(salesAds: List<SalesUiAdModel>?) {
 
 
-        setupDots(salesAds!!.size)
-        updateDots(0)
+//        setupDots(salesAds!!.size)
+        setIndicator(salesAds!!.size,requireContext(),binding.indicatorView)
+        updateIndicator(0,binding.indicatorView, requireContext())
         val adapter = SalesAdAdapter(lifecycleScope, salesAds)
         binding.saleAdsViewPager.adapter = adapter
         binding.saleAdsViewPager.setPageTransformer(DepthPageTransformer())
@@ -241,7 +244,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                updateDots(position)
+                updateIndicator(position,binding.indicatorView, requireContext())
             }
         })
 

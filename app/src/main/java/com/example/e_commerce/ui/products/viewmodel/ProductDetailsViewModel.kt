@@ -1,12 +1,12 @@
-package com.example.e_commerce.ui.products
+package com.example.e_commerce.ui.products.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.e_commerce.data.repository.products.ProductRepository
 import com.example.e_commerce.domain.models.toProductUIModel
+import com.example.e_commerce.ui.products.ProductDetailsActivity
 import com.example.e_commerce.ui.products.models.ProductUIModel
-import dagger.hilt.android.lifecycle.ActivityRetainedSavedState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
