@@ -54,4 +54,6 @@ abstract class BaseFragment<DB: ViewDataBinding, VM: ViewModel> : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }
